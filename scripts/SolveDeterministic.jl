@@ -9,16 +9,22 @@ include(srcdir("PayoffMatrix.jl"))
 include(srcdir("DeterministicSRC.jl"))
 
 using DynamicalSystems
+using DelimitedFiles
 
 ################################################################################
 #                               Set parameters                                 #
 ################################################################################
 
 #Initial conditions
+#The initial conditions are fixed, because these ones work very well to view the
+# Skyrms' attractor
 ini_con = initial_conditions(0.25,0.25,0.25,0.25)
 
 #Selection intensity coefficient
-B = 0.1
+B = 0.01
+
+#Dictionary of parameters
+params = @strdict B
 
 ################################################################################
 #                     Generate and evolve dynamical system                     #
@@ -52,5 +58,9 @@ for low B values, to keep time steps constant.
 `data = trajectory(ds,1000;Δt = 0.01)`          --> B=100.0
 
 """
-data = trajectory(ds,100000; Δt = 1.0)
-println(data)
+data = trajectory(ds,1000000; Δt = 10.0)
+
+
+#Save solution of the ODEs system
+#The solution is saved in data/Deterministic
+writedlm(datadir("Deterministic", savename("Det", params, "txt")), data)
