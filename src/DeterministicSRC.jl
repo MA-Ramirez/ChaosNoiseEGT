@@ -1,5 +1,5 @@
 """
-Function used to define the ODEs of the deterministic system.
+Functions used to define the ODEs of the deterministic system.
 """
 
 using DrWatson
