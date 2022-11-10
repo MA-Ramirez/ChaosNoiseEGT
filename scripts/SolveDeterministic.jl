@@ -56,7 +56,6 @@ for low B values, to keep time steps constant.
 `data = trajectory(ds,100000; Δt = 1.0)`        --> B=0.1
 `data = trajectory(ds,10000;Δt = 0.1)`          --> B=1.0 B=10.0
 `data = trajectory(ds,1000;Δt = 0.01)`          --> B=100.0
-
 """
 data = trajectory(ds,1000000; Δt = 10.0)
 
