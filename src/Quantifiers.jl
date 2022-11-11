@@ -11,7 +11,10 @@ using DynamicalSystems
 using Statistics
 
 """
-    fractal_dimension(data) → Float64
+    fractal_dimension(data) → Tuple{Float64, Vector{Float64}, Vector{Float64}}
+    The output is: Fractal Dimension (Float64)
+    Radii in logarithmic scale (Vector{Float64})
+    Correlation sum in logarithmic scale (Vector{Float64})
 The fractal dimension of the attractor is calculated using the correlation dimension.
 It is based on the correlation sum, which measures how tightly clustered the points
 are in a set. i.e. the amount of neighbours within a radius.
@@ -30,11 +33,15 @@ function fractal_dimension(data)
     #The correlation sum for all radii are calculated
     cs = boxed_correlationsum(data::Dataset, εs)
 
+    #Radii and correlation sum in logarithmic scale
+    Lεs = log10.(εs)
+    Lcs = log10.(cs)
+
     #Calculates the slope of the linear region
     slope_info = linear_region(log10.(εs),log10.(cs))
 
     frac_dim = round(slope_info[2], digits= 5)
-    return frac_dim
+    return frac_dim, Lεs, Lcs
 end
 
 """
