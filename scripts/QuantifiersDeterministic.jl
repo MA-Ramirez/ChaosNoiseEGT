@@ -63,6 +63,10 @@ end
 ################################################################################
 #                   Apply quantifiers to data and save results                 #
 ################################################################################
+
+##################################################
+#                 FRACTAL DIMENSION              #
+##################################################
 """
     graph_fractaldimension(namefile,Les,Lcs,approach::String) → pdf file
 Graph logarithmic correlation sum vs logarithmic radii for fractal dimension calculation
@@ -83,6 +87,86 @@ function graph_fractaldimension(namefile,Les,Lcs,approach::String)
     clf()
 end
 
+"""
+    run_fractaldimension(data,namefile,approach::String) → pdf file, txt file
+Run and save the fractal dimension of the data. Also graph the fractal
+dimension calculation plot.
+"""
+function run_fractaldimension(data,namefile,approach::String)
+    FD_info = fractal_dimension(data)
+
+    #Fractal Dimension (Float64)
+    FD = [FD_info[1]]
+    #Radii in logarithmic scale (Vector{Float64})
+    Les = FD_info[2]
+    #Correlation sum in logarithmic scale (Vector{Float64})
+    Lcs = FD_info[3]
+
+    #Graphs plot for fractal dimension calculation
+    graph_fractaldimension(namefile,Les,Lcs,approach)
+
+    #Full info to be saved
+    info_FD = adjoint(prepend!(FD,getparams(namefile,approach)))
+    #The solution is saved in data/Quantifiers_Deterministic
+    open(datadir("Quantifiers_"*approach, "Det_FD.txt"), "a") do io
+        writedlm(io, info_FD,",")
+    end
+end
+
+##################################################
+#                STANDARD DEVIATION              #
+##################################################
+"""
+    run_standarddeviation(data,namefile,approach::String) → txt file
+Run and save the standard deviation of the data
+"""
+function run_standarddeviation(data,namefile,approach::String)
+    std = standard_deviation(data)
+
+    #Full info to be saved
+    info_std = adjoint(prepend!(std,getparams(namefile,approach)))
+    #The solution is saved in data/Quantifiers_Deterministic
+    open(datadir("Quantifiers_"*approach, "Det_Std.txt"), "a") do io
+        writedlm(io, info_std,",")
+    end
+end
+
+##################################################
+#                  FIXATION TIME                 #
+##################################################
+"""
+    run_fixationtime(data,namefile,approach::String) → txt file
+Run and save the fixation time of the data
+"""
+function run_fixationtime(data,namefile,approach::String)
+    fixT = [Float64(fixation_time(data))]
+
+    #Full info to be saved
+    info_fixT = adjoint(prepend!(fixT,getparams(namefile,approach)))
+    #The solution is saved in data/Quantifiers_Deterministic
+    open(datadir("Quantifiers_"*approach, "Det_FixT.txt"), "a") do io
+        writedlm(io, info_fixT,",")
+    end
+end
+
+##################################################
+#                   LEMPEL-ZIV                   #
+##################################################
+"""
+    run_lempelziv(data,namefile,approach::String) → txt file
+Run and save the Lempel-Ziv complexity measure of the data
+"""
+function run_lempelziv(data,namefile,approach::String)
+    LZ_data = lempelzivdata(data)
+
+
+    #Full info to be saved
+    info_LZ = adjoint(prepend!(LZ_data,getparams(namefile,approach)))
+    #The solution is saved in data/Quantifiers_Deterministic
+    open(datadir("Quantifiers_"*approach, "Det_LZ.txt"), "a") do io
+        writedlm(io, info_LZ,",")
+    end
+end
 
 """
     run_quantifiers(namefile,approach::String)
@@ -101,36 +185,22 @@ function run_quantifiers(namefile,approach::String)
     ##################################################
     #                 FRACTAL DIMENSION              #
     ##################################################
-    FD_info = fractal_dimension(Data)
-
-    #Fractal Dimension (Float64)
-    FD = [FD_info[1]]
-    #Radii in logarithmic scale (Vector{Float64})
-    Les = FD_info[2]
-    #Correlation sum in logarithmic scale (Vector{Float64})
-    Lcs = FD_info[3]
-
-    #Graphs plot for fractal dimension calculation
-    graph_fractaldimension(namefile,Les,Lcs,approach)
-
-    #Full info to be saved
-    info_FD = adjoint(prepend!(FD,getparams(namefile,approach)))
-    #The solution is saved in data/Quantifiers_Deterministic
-    open(datadir("Quantifiers_"*approach, "Det_FD.txt"), "a") do io
-        writedlm(io, info_FD,",")
-    end
+    run_fractaldimension(Data,namefile,approach)
 
     ##################################################
     #                STANDARD DEVIATION              #
     ##################################################
-    std = standard_deviation(Data)
+    run_standarddeviation(Data,namefile,approach)
 
-    #Full info to be saved
-    info_std = adjoint(prepend!(std,getparams(namefile,approach)))
-    #The solution is saved in data/Quantifiers_Deterministic
-    open(datadir("Quantifiers_"*approach, "Det_Std.txt"), "a") do io
-        writedlm(io, info_std,",")
-    end
+    ##################################################
+    #                  FIXATION TIME                 #
+    ##################################################
+    run_fixationtime(Data,namefile,approach)
+
+    ##################################################
+    #                   LEMPEL-ZIV                   #
+    ##################################################
+    run_lempelziv(Data,namefile,approach)
 
 end
 

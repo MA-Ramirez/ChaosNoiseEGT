@@ -10,6 +10,9 @@ using DrWatson
 using DynamicalSystems
 using Statistics
 
+##################################################
+#                 FRACTAL DIMENSION              #
+##################################################
 """
     fractal_dimension(data) → Tuple{Float64, Vector{Float64}, Vector{Float64}}
     The output is: Fractal Dimension (Float64)
@@ -44,21 +47,111 @@ function fractal_dimension(data)
     return frac_dim, Lεs, Lcs
 end
 
+##################################################
+#                STANDARD DEVIATION              #
+##################################################
 """
     standard_deviation(data) → Vector{Float64}
 Calculates the standard deviation for all variables in data.
 """
 function standard_deviation(data)
-    ans = Vector{Float64}(undef,size(data)[2])
+    std_all = Vector{Float64}(undef,size(data)[2])
 
     for i in 1:size(data)[2]
         std_xi = round(std(data[:,i]),digits=3)
-        ans[i] = std_xi
+        std_all[i] = std_xi
     end
 
-    return ans
+    return std_all
 end
 
-#TO-DO get these graphs
-#The correlation sums are plotted as a function of the radii, in a logarithmic scale
-#scatter(log10.(εs),log10.(cs))
+##################################################
+#                  FIXATION TIME                 #
+##################################################
+"""
+    fixation_time(data) → Int64
+Returns the amount of time steps for of the evolution of the trajectory.
+i.e. length of the vector corresponding to each variable
+"""
+function fixation_time(data)
+    fix_time = size(data)[1]
+    return fix_time
+end
+
+##################################################
+#                   LEMPEL-ZIV                   #
+##################################################
+"""
+    lempel_ziv_complexity(sequence) → Int64
+Lempel-Ziv complexity measure for a binary sequence, in naive Julia code.
+  https://GitHub.com/Naereen/Lempel-Ziv_Complexity
+"""
+function lempel_ziv_complexity(sequence)
+    sub_strings = Set()
+    n = length(sequence)
+
+    ind = 1
+    inc = 0
+    while true
+        if ind + inc > n
+            break
+        end
+        sub_str = sequence[ind : ind + inc]
+        if sub_str in sub_strings
+            inc += 1
+        else
+            push!(sub_strings, sub_str)
+            ind += (inc+1)
+            inc = 0
+        end
+    end
+    return length(sub_strings)
+end
+
+"""
+    binarise_vector(vecData) → String
+Turns vector into a binary sequence of type `String`.
+The binarisation works as follows:
+if element is below the vector mean is equal to 0, otherwise it is equal to 1.
+"""
+function binarise_vector(vecdata)
+    #Calculate mean of array
+    mean_vec = mean(vecdata)
+    #Empty string to store binsarised output
+    Str = ""
+
+    #Binarise each element of array
+    for i in 1:size(vecdata)[1]
+        if vecdata[i] < mean_vec
+            Str = string(Str,"0")
+        else
+            Str = string(Str,"1")
+        end
+    end
+    return Str
+end
+
+"""
+    lempelzivdata(data) → Vector{Float64}
+Calculates Lempel-Ziv complexity measure for all the variables in data.
+The final element is the average of the Lempel-Ziv measure of all variables.
+"""
+function lempelzivdata(data)
+    num_variables = size(data)[2]
+
+    LZ_all = Vector{Float64}(undef,num_variables+1)
+
+    #LZ calculation for each variable
+    for i in 1:num_variables
+        binary_vector = binarise_vector(data[:,i])
+        LZ_vector = Float64(lempel_ziv_complexity(binary_vector))
+        LZ_all[i] = LZ_vector
+    end
+
+    #Mean of LZ measure of all variables
+    mean_LZ_all = mean(LZ_all[1:end-1])
+    #Add mean at the end of vector
+    LZ_all[end] = mean_LZ_all
+
+    return LZ_all
+end
