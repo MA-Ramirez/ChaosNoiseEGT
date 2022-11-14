@@ -5,7 +5,6 @@ Script used to solve ODEs and save the solution in data folder.
 using DrWatson
 @quickactivate "ChaosNoiseEGT"
 
-include(srcdir("PayoffMatrix.jl"))
 include(srcdir("DeterministicSRC.jl"))
 
 using DynamicalSystems
