@@ -41,7 +41,7 @@ function replacement_probability(fi,fj,B)
 end
 
 """
-    replacement_decision_update(Player_i,Player_j,amounts,probability) → Vector{Int64}
+    replacement_decision_update(Player_i,Player_j,amounts,probability) → Vector{Float64}
 `Player_i`: type of player i
 `Player_i`: type of player j
 `amounts`: Vector{Int64} contains the amount of individuals of each type in the population
@@ -62,7 +62,7 @@ function replacement_decision_update(Player_i,Player_j,amounts,probability)
 end
 
 """
-    step(amounts,B) → Vector{Int64}
+    step(amounts,B) → Vector{Float64}
 `amounts`: Vector{Int64} contains the amount of individuals of each type in the population
 `B`: selection intensity coefficient
 Generates a step in the process, returns the updated `amounts` vector
@@ -87,4 +87,68 @@ function step(amounts,B)
     end
 
     return amounts_update
+end
+
+################################################################################
+#                              RUN PROCESS FUNCTIONS                           #
+################################################################################
+
+"""
+    reach_boundary(amounts) → Boolean
+If any of the quantities in `amounts` reaches the boundary, it returns true.
+i.e. when any quantity in `amounts` reaches zero (the process should be stopped)
+"""
+function reach_boundary(amounts)
+    stop = false
+    for i in amounts
+        if i == 0.0
+            stop = true
+        end
+    end
+    return stop
+end
+
+"""
+    run_process(initial_amounts, populationsize, Beta, time_steps) → Vector{Any}
+`Beta`: selection intensity coefficient
+It runs the pairwise comparison process step for `time_steps` amount of times.
+It returns an array of arrays with the data of the evolution of the process
+"""
+function run_process(initial_amounts, populationsize, Beta, time_steps)
+    data_process = []
+
+    #Initialise first entry with initial conditions
+    push!(data_process,initial_amounts)
+
+    for i in 2:time_steps
+        #Deep copy to copy by value not by reference
+        prev_step_data = deepcopy(data_process[end])
+        step_data = step(prev_step_data,Beta)
+
+        #If any type reaches the boundary, stop the process
+        if reach_boundary(step_data) == true
+            push!(data_process,step_data)
+            break
+        end
+
+        push!(data_process,step_data)
+    end
+    return data_process
+end
+
+"""
+    normalise_data(data_trajectory, populationsize) → Vector{Vector{Float64}}
+It normalises the data of the evolution of the process.
+The quantities are now given in relative amounts
+"""
+function normalise_data(data_trajectory, populationsize)
+    size_data_trajectory = size(data_trajectory)[1]
+    #Initialise empty array
+    normalised_data = fill(Float64[], size_data_trajectory)
+
+    for i in 1:size_data_trajectory
+        normalised_data[i] = data_trajectory[i]/populationsize
+    end
+
+    return normalised_data
 end
