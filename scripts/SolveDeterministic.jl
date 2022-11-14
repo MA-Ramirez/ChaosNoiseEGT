@@ -14,11 +14,14 @@ using DelimitedFiles
 #                               Set parameters                                 #
 ################################################################################
 
+"""
+The initial conditions should fulfil the normalisation condition
+i.e. sum(x_i) = 1
+The Skyrms' attractor can be properly seen starting with initial conditions
+close to the center of the simplex
+"""
 #Initial conditions
-#The initial conditions are fixed, because these ones work very well to view the
-# Skyrms' attractor
-ini_con = initial_conditions(0.25,0.25,0.25,0.25)
-
+ini_con = [0.25,0.25,0.25,0.25]
 #Selection intensity coefficient
 B = 0.01
 
@@ -37,7 +40,7 @@ params = @strdict B
 
 Generate dynamical system using DynamicalSystems package
 """
-ds = ContinuousDynamicalSystem(dynamic_rule_PCP, ini_con, B)
+ds = ContinuousDynamicalSystem(dynamic_rule_PCP!, ini_con, B)
 
 
 """
@@ -58,6 +61,9 @@ for low B values, to keep time steps constant.
 """
 data = trajectory(ds,1000000; Δt = 10.0)
 
+################################################################################
+#                                   Save data                                 #
+################################################################################
 
 #Save solution of the ODEs system
 #The solution is saved in data/Deterministic
