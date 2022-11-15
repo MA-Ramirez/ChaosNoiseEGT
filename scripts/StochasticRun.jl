@@ -32,11 +32,25 @@ end
 #                                Set parameters                                #
 ################################################################################
 
-#Selection intensity coefficient
-B = 0.01
+#Obtain arguments and define them as global variables
+num_arguments = size(ARGS)[1]
 
+#Check correct input of parameters
+#Check num_arguments
+if num_arguments != 3
+    throw(ArgumentError("There should be 3 command line arguments, but there are "*string(num_arguments)))
+end
+
+APPROACH = ARGS[1]
+#Selection intensity coefficient
+B = parse(Float64,ARGS[2])
 #Population size
-N = 50000
+N = parse(Int64,ARGS[3])
+
+#The approach can only be "Deterministic" or "Stochastic"
+if APPROACH != "Deterministic" && APPROACH != "Stochastic"
+    throw(ArgumentError("The approach can only be Deterministic or Stochastic. It is case sensitive. Check spelling."))
+end
 
 #Time steps
 T = 100000

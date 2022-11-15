@@ -17,15 +17,39 @@ using LaTeXStrings
 #                                   Import data                                #
 ################################################################################
 
-#Dictionary of names of all the files in data/Deterministic
-datafiles_names = readdir(datadir("Deterministic"))
+
+#Obtain arguments and define them as global variables
+num_arguments = size(ARGS)[1]
+APPROACH = ARGS[1]
+B = ARGS[2]
+if num_arguments == 3
+    N = ARGS[3]
+end
+
+#The approach can only be "Deterministic" or "Stochastic"
+if APPROACH != "Deterministic" && APPROACH != "Stochastic"
+    throw(ArgumentError("The approach can only be Deterministic or Stochastic. It is case sensitive. Check spelling."))
+end
+
+#From arguments define the name of the file to read
+if APPROACH == "Deterministic"
+    NAMEFILE = "Det_B="*B*".txt"
+elseif APPROACH == "Stochastic"
+    NAMEFILE = "Sto_B="*B*"_N="*N*".txt"
+end
 
 """
     getdata(namefile) → x1,x,2,x3,x4
+`approach`: defines if Deterministic or Stochastic will be analysed.
+This parameter is used also for folder organisation purposes
 Imports data from files and returns each variables' info in a vector
 """
-function getdata(namefile)
-    data = readdlm(datadir("Deterministic", namefile))
+function getdata(approach,namefile)
+    if approach == "Deterministic"
+        data = readdlm(datadir("Deterministic", namefile))
+    elseif approach == "Stochastic"
+        data = readdlm(datadir("Stochastic", namefile))
+    end
 
     #Each variable of the system
     x1 = data[:,1]
@@ -41,7 +65,9 @@ end
 ################################################################################
 
 """
-    ternary_plot(namefile,x1,x2,x3) → pdf file
+    ternary_plot(approach,namefile,x1,x2,x3) → pdf file
+`approach`: defines if Deterministic or Stochastic will be analysed.
+This parameter is used also for folder organisation purposes
 `namefile`: name of the file with the data
 `x1`,`x2`,`x3`: vectors with variables data
 
@@ -50,7 +76,7 @@ Mpltern is a Python plotting library based on Matplotlib specifically designed
 for ternary plots.
 A similar library with the quality of mpltern is not yet available in Julia.
 """
-function ternary_plot(namefile,x1,x2,x3)
+function ternary_plot(approach,namefile,x1,x2,x3)
     ax = plt.subplot(projection="ternary")
 
     #Generate plot
@@ -75,19 +101,28 @@ function ternary_plot(namefile,x1,x2,x3)
     ax.raxis.label.set_color("r")
 
     plt.tight_layout()
-    #CREATE FIRST THE SUBFOLDER "Deterministic/TernaryDet" IN THE "Plots" FOLDER
-    plt.savefig(plotsdir("Deterministic/TernaryDet",namefile[1:end-3]*String("pdf")))
+
+    #Save settings
+    if approach == "Deterministic"
+        #CREATE FIRST THE SUBFOLDER "Deterministic/TernaryDet" IN THE "Plots" FOLDER
+        plt.savefig(plotsdir("Deterministic/TernaryDet",namefile[1:end-3]*String("pdf")))
+    elseif approach == "Stochastic"
+        #CREATE FIRST THE SUBFOLDER "Stochastic/TernarySto" IN THE "Plots" FOLDER
+        plt.savefig(plotsdir("Stochastic/TernarySto",namefile[1:end-3]*String("pdf")))
+    end
     plt.clf()
 end
 
 """
-    timeseries(namefile,x1,x2,x3,x4) → pdf file
+    timeseries(approach,namefile,x1,x2,x3,x4) → pdf file
+`approach`: defines if Deterministic or Stochastic will be analysed.
+This parameter is used also for folder organisation purposes
 `namefile`: name of the file with the data
 `x1`,`x2`,`x3`,`x4`: vectors with variables data
 
 Generates timeseries graph with all the variables.
 """
-function timeseries(namefile,x1,x2,x3,x4)
+function timeseries(approach,namefile,x1,x2,x3,x4)
 
     #Time vector
     t = Vector(1:length(x1))
@@ -102,20 +137,29 @@ function timeseries(namefile,x1,x2,x3,x4)
     plt.ylabel(L"x_k")
     plt.legend(loc="center left", bbox_to_anchor=(1, 0.5))
     plt.tight_layout()
-    #CREATE FIRST THE SUBFOLDER "Deterministic/TimeseriesDet" IN THE "Plots" FOLDER
-    plt.savefig(plotsdir("Deterministic/TimeseriesDet",namefile[1:end-4]*String("_TS.pdf")))
+
+    #Save settings
+    if approach == "Deterministic"
+        #CREATE FIRST THE SUBFOLDER "Deterministic/TernaryDet" IN THE "Plots" FOLDER
+        plt.savefig(plotsdir("Deterministic/TimeseriesDet",namefile[1:end-3]*String("_TS.pdf")))
+    elseif approach == "Stochastic"
+        #CREATE FIRST THE SUBFOLDER "Stochastic/TernarySto" IN THE "Plots" FOLDER
+        plt.savefig(plotsdir("Stochastic/TimeseriesSto",namefile[1:end-3]*String("_TS.pdf")))
+    end
     plt.clf()
 end
 
 """
-    timeseries_zoom(namefile,x1,x2,x3,x4) → pdf file
+    timeseries_zoom(approach,namefile,x1,x2,x3,x4) → pdf file
+`approach`: defines if Deterministic or Stochastic will be analysed.
+This parameter is used also for folder organisation purposes
 `namefile`: name of the file with the data
 `x1`,`x2`,`x3`,`x4`: vectors with variables data
 
 Generates timeseries graph with all the variables.
 It zooms over the first 100 time steps.
 """
-function timeseries_zoom(namefile,x1,x2,x3,x4)
+function timeseries_zoom(approach,namefile,x1,x2,x3,x4)
 
     #Time vector
     t = Vector(1:length(x1))
@@ -131,18 +175,24 @@ function timeseries_zoom(namefile,x1,x2,x3,x4)
     plt.legend(loc="center left", bbox_to_anchor=(1, 0.5))
     plt.xlim((0,100))
     plt.tight_layout()
-    #CREATE FIRST THE SUBFOLDER "Deterministic/TimeseriesDet" IN THE "Plots" FOLDER
-    plt.savefig(plotsdir("Deterministic/TimeseriesDet",namefile[1:end-4]*String("_TS_Zoom.pdf")))
+
+    #Save settings
+    if approach == "Deterministic"
+        #CREATE FIRST THE SUBFOLDER "Deterministic/TernaryDet" IN THE "Plots" FOLDER
+        plt.savefig(plotsdir("Deterministic/TimeseriesDet",namefile[1:end-3]*String("_TS_Zoom.pdf")))
+    elseif approach == "Stochastic"
+        #CREATE FIRST THE SUBFOLDER "Stochastic/TernarySto" IN THE "Plots" FOLDER
+        plt.savefig(plotsdir("Stochastic/TimeseriesSto",namefile[1:end-3]*String("_TS_Zoom.pdf")))
+    end
     plt.clf()
 end
 
 ################################################################################
-#                Graph plots for all deterministic trajectories                #
+#                                  Graph plots                                 #
 ################################################################################
 
-for i in datafiles_names
-    X1,X2,X3,X4 = getdata(i)
-    ternary_plot(i,X1,X2,X3)
-    timeseries(i,X1,X2,X3,X4)
-    timeseries_zoom(i,X1,X2,X3,X4)
-end
+
+X1,X2,X3,X4 = getdata(APPROACH,NAMEFILE)
+ternary_plot(APPROACH,NAMEFILE,X1,X2,X3)
+timeseries(APPROACH,NAMEFILE,X1,X2,X3,X4)
+timeseries_zoom(APPROACH,NAMEFILE,X1,X2,X3,X4)
