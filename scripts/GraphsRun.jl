@@ -39,7 +39,7 @@ elseif APPROACH == "Stochastic"
 end
 
 """
-    getdata(namefile) → x1,x,2,x3,x4
+    getdata(approach,namefile) → x1,x,2,x3,x4
 `approach`: defines if Deterministic or Stochastic will be analysed.
 This parameter is used also for folder organisation purposes
 Imports data from files and returns each variables' info in a vector

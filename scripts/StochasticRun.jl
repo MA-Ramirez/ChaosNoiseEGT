@@ -32,15 +32,13 @@ end
 #                                Set parameters                                #
 ################################################################################
 
-#Obtain arguments and define them as global variables
-num_arguments = size(ARGS)[1]
-
 #Check correct input of parameters
-#Check num_arguments
+num_arguments = size(ARGS)[1]
 if num_arguments != 3
     throw(ArgumentError("There should be 3 command line arguments, but there are "*string(num_arguments)))
 end
 
+#Obtain arguments and define them as global variables
 APPROACH = ARGS[1]
 #Selection intensity coefficient
 B = parse(Float64,ARGS[2])
