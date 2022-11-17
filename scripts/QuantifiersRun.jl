@@ -12,52 +12,52 @@ using DrWatson
 include(srcdir("Quantifiers.jl"))
 
 using DelimitedFiles
-using PyPlot
+using PyCall
+using LaTeXStrings
+
+@pyimport matplotlib.pyplot as plt
 
 ################################################################################
 #                                   Import data                                #
 ################################################################################
 
-#Dictionary of names of all the files in data/Deterministic
-datafiles_names = readdir(datadir("Deterministic"))
+#Check correct input of parameters
+num_arguments = size(ARGS)[1]
+if num_arguments == 1
+    APPROACH = "Deterministic"
+elseif num_arguments == 2
+    APPROACH = "Stochastic"
+else
+    throw(ArgumentError("There should be 3 command line arguments, but there are "*string(num_arguments)))
+end
+
+#Obtain arguments and define them as global variables
+B = ARGS[1]
+if num_arguments == 2
+    N = ARGS[2]
+end
+
+#From arguments define the name of the file to read
+if APPROACH == "Deterministic"
+    NAMEFILE = "Det_B="*B*".txt"
+elseif APPROACH == "Stochastic"
+    NAMEFILE = "Sto_B="*B*"_N="*N*".txt"
+end
 
 """
-    getdata(namefile,approach::String) → Matrix{Float64}
+    getdata(approach,namefile) → Matrix{Float64}
 `approach`: defines if Deterministic or Stochastic will be analysed.
 This parameter is used also for folder organisation purposes
 Imports data from files and returns it as a matrix
 """
-function getdata(namefile,approach::String)
-    #The approach can only be "Deterministic" or "Stochastic"
-    if approach != "Deterministic" && approach != "Stochastic"
-        throw(ArgumentError("The approach can only be Deterministic or Stochastic. It is case sensitive. Check spelling."))
+function getdata(approach,namefile)
+    if approach == "Deterministic"
+        data = readdlm(datadir("Deterministic", namefile))
+    elseif approach == "Stochastic"
+        data = readdlm(datadir("Stochastic", namefile))
     end
-
-    data = readdlm(datadir(approach, namefile))
 
     return data
-end
-
-"""
-    getparams(namefile,approach::String) → Float64 or Vector{Float64}
-`approach`: defines if Deterministic or Stochastic will be analysed.
-This parameter is used also for folder organisation purposes
-Gets parameters information from `namefile`
-"""
-function getparams(namefile,approach::String)
-    #The approach can only be "Deterministic" or "Stochastic"
-    if approach != "Deterministic" && approach != "Stochastic"
-        throw(ArgumentError("The approach can only be Deterministic or Stochastic. It is case sensitive. Check spelling."))
-    end
-
-    #Only B needs to be retrieved from namefile for the deterministic case
-    if approach == "Deterministic"
-        ini =findfirst("B=",namefile)[end]
-        fin = findfirst(".txt",namefile)[1]
-        B = namefile[ini+1:fin-1]
-        ans = parse(Float64,B)
-    end
-    return ans
 end
 
 ################################################################################
@@ -68,31 +68,33 @@ end
 #                 FRACTAL DIMENSION              #
 ##################################################
 """
-    graph_fractaldimension(namefile,Les,Lcs,approach::String) → pdf file
+    graph_fractaldimension(approach,namefile,Les,Lcs) → pdf file
 Graph logarithmic correlation sum vs logarithmic radii for fractal dimension calculation
 """
-function graph_fractaldimension(namefile,Les,Lcs,approach::String)
-    #The approach can only be "Deterministic" or "Stochastic"
-    if approach != "Deterministic" && approach != "Stochastic"
-        throw(ArgumentError("The approach can only be Deterministic or Stochastic. It is case sensitive. Check spelling."))
-    end
+function graph_fractaldimension(approach,namefile,Les,Lcs)
 
     #Command to turn off automatic figure output in screen
-    ioff()
-    scatter(Les,Lcs)
-    xlabel(L"log_{10}(\varepsilon)")
-    ylabel(L"log_{10}(C)")
-    #CREATE FIRST THE SUBFOLDER "Deterministic/FractalDimDet" IN THE "Plots" FOLDER
-    savefig(plotsdir(approach*"/FractalDimDet",namefile[1:end-4]*String("_FD.pdf")))
-    clf()
+    #ioff()
+    plt.scatter(Les,Lcs)
+    plt.xlabel(L"log_{10}(\varepsilon)")
+    plt.ylabel(L"log_{10}(C)")
+    #Save settings
+    if approach == "Deterministic"
+        #CREATE FIRST THE SUBFOLDER "Deterministic/FractalDimDet" IN THE "Plots" FOLDER
+        plt.savefig(plotsdir(approach*"/FractalDimDet",namefile[1:end-4]*String("_FD.pdf")))
+    elseif approach == "Stochastic"
+        #CREATE FIRST THE SUBFOLDER "Stochastic/FractalDimSto" IN THE "Plots" FOLDER
+        plt.savefig(plotsdir(approach*"/FractalDimSto",namefile[1:end-4]*String("_FD.pdf")))
+    end
+    plt.clf()
 end
 
 """
-    run_fractaldimension(data,namefile,approach::String) → pdf file, txt file
+    run_fractaldimension(approach,data,namefile) → pdf file, txt file
 Run and save the fractal dimension of the data. Also graph the fractal
 dimension calculation plot.
 """
-function run_fractaldimension(data,namefile,approach::String)
+function run_fractaldimension(approach,data,namefile)
     FD_info = fractal_dimension(data)
 
     #Fractal Dimension (Float64)
@@ -103,31 +105,55 @@ function run_fractaldimension(data,namefile,approach::String)
     Lcs = FD_info[3]
 
     #Graphs plot for fractal dimension calculation
-    graph_fractaldimension(namefile,Les,Lcs,approach)
+    #graph_fractaldimension(approach,namefile,Les,Lcs)
 
-    #Full info to be saved
-    info_FD = adjoint(prepend!(FD,getparams(namefile,approach)))
-    #The solution is saved in data/Quantifiers_Deterministic
-    open(datadir("Quantifiers_"*approach, "Det_FD.txt"), "a") do io
-        writedlm(io, info_FD,",")
+    if approach == "Deterministic"
+        #Full info to be saved
+        params = [parse(Float64,B)]
+        info_FD = adjoint(prepend!(FD,params))
+        #The solution is saved in data/Quantifiers/QuantifiersDet
+        open(datadir("Quantifiers/QuantifiersDet", "Det_FD.txt"), "a") do io
+            writedlm(io, info_FD,",")
+        end
+    elseif approach == "Stochastic"
+        #Full info to be saved
+        params = [parse(Float64,B),parse(Int64,N)]
+        info_FD = adjoint(prepend!(FD,params))
+        #The solution is saved in data/Quantifiers/QuantifiersSto
+        open(datadir("Quantifiers/QuantifiersSto", "Sto_FD.txt"), "a") do io
+            writedlm(io, info_FD,",")
+        end
     end
+
+    return Les, Lcs
 end
 
 ##################################################
 #                STANDARD DEVIATION              #
 ##################################################
 """
-    run_standarddeviation(data,namefile,approach::String) → txt file
+    run_standarddeviation(approach,data,namefile) → txt file
 Run and save the standard deviation of the data
 """
-function run_standarddeviation(data,namefile,approach::String)
+function run_standarddeviation(approach,data,namefile)
     std = standard_deviation(data)
 
-    #Full info to be saved
-    info_std = adjoint(prepend!(std,getparams(namefile,approach)))
-    #The solution is saved in data/Quantifiers_Deterministic
-    open(datadir("Quantifiers_"*approach, "Det_Std.txt"), "a") do io
-        writedlm(io, info_std,",")
+    if approach == "Deterministic"
+        #Full info to be saved
+        params = [parse(Float64,B)]
+        info_std = adjoint(prepend!(std,params))
+        #The solution is saved in data/Quantifiers/QuantifiersDet
+        open(datadir("Quantifiers/QuantifiersDet", "Det_Std.txt"), "a") do io
+            writedlm(io, info_std,",")
+        end
+    elseif approach == "Stochastic"
+        #Full info to be saved
+        params = [parse(Float64,B),parse(Int64,N)]
+        info_std = adjoint(prepend!(std,params))
+        #The solution is saved in data/Quantifiers/QuantifiersSto
+        open(datadir("Quantifiers/QuantifiersSto", "Sto_Std.txt"), "a") do io
+            writedlm(io, info_std,",")
+        end
     end
 end
 
@@ -135,17 +161,28 @@ end
 #                  FIXATION TIME                 #
 ##################################################
 """
-    run_fixationtime(data,namefile,approach::String) → txt file
+    run_fixationtime(approach,data,namefile) → txt file
 Run and save the fixation time of the data
 """
-function run_fixationtime(data,namefile,approach::String)
+function run_fixationtime(approach,data,namefile)
     fixT = [Float64(fixation_time(data))]
 
-    #Full info to be saved
-    info_fixT = adjoint(prepend!(fixT,getparams(namefile,approach)))
-    #The solution is saved in data/Quantifiers_Deterministic
-    open(datadir("Quantifiers_"*approach, "Det_FixT.txt"), "a") do io
-        writedlm(io, info_fixT,",")
+    if approach == "Deterministic"
+        #Full info to be saved
+        params = [parse(Float64,B)]
+        info_fixT = adjoint(prepend!(fixT,params))
+        #The solution is saved in data/Quantifiers/QuantifiersDet
+        open(datadir("Quantifiers/QuantifiersDet", "Det_FixT.txt"), "a") do io
+            writedlm(io, info_fixT,",")
+        end
+    elseif approach == "Stochastic"
+        #Full info to be saved
+        params = [parse(Float64,B),parse(Int64,N)]
+        info_fixT = adjoint(prepend!(fixT,params))
+        #The solution is saved in data/Quantifiers/QuantifiersSto
+        open(datadir("Quantifiers/QuantifiersSto", "Sto_FixT.txt"), "a") do io
+            writedlm(io, info_fixT,",")
+        end
     end
 end
 
@@ -153,55 +190,63 @@ end
 #                   LEMPEL-ZIV                   #
 ##################################################
 """
-    run_lempelziv(data,namefile,approach::String) → txt file
+    run_lempelziv(approach,data,namefile) → txt file
 Run and save the Lempel-Ziv complexity measure of the data
 """
-function run_lempelziv(data,namefile,approach::String)
-    LZ_data = lempelzivdata(data)
+function run_lempelziv(approach,data,namefile)
+    LZ = lempelzivdata(data)
 
-
-    #Full info to be saved
-    info_LZ = adjoint(prepend!(LZ_data,getparams(namefile,approach)))
-    #The solution is saved in data/Quantifiers_Deterministic
-    open(datadir("Quantifiers_"*approach, "Det_LZ.txt"), "a") do io
-        writedlm(io, info_LZ,",")
+    if approach == "Deterministic"
+        #Full info to be saved
+        params = [parse(Float64,B)]
+        info_LZ = adjoint(prepend!(LZ,params))
+        #The solution is saved in data/Quantifiers/QuantifiersDet
+        open(datadir("Quantifiers/QuantifiersDet", "Det_LZ.txt"), "a") do io
+            writedlm(io, info_LZ,",")
+        end
+    elseif approach == "Stochastic"
+        #Full info to be saved
+        params = [parse(Float64,B),parse(Int64,N)]
+        info_LZ = adjoint(prepend!(LZ,params))
+        #The solution is saved in data/Quantifiers/QuantifiersSto
+        open(datadir("Quantifiers/QuantifiersSto", "Sto_LZ.txt"), "a") do io
+            writedlm(io, info_LZ,",")
+        end
     end
 end
 
 """
-    run_quantifiers(namefile,approach::String)
+    run_quantifiers(approach,namefile)
 `approach`: defines if Deterministic or Stochastic will be analysed.
 This parameter is used also for folder organisation purposes
 Run quantifiers and save info in corresponding file
 """
-function run_quantifiers(namefile,approach::String)
-    #The approach can only be "Deterministic" or "Stochastic"
-    if approach != "Deterministic" && approach != "Stochastic"
-        throw(ArgumentError("The approach can only be Deterministic or Stochastic. It is case sensitive. Check spelling."))
-    end
+function run_quantifiers(approach,namefile)
 
-    Data = getdata(namefile,approach)
+    Data = getdata(approach,namefile)
 
     ##################################################
     #                 FRACTAL DIMENSION              #
     ##################################################
-    run_fractaldimension(Data,namefile,approach)
+    Les,Lcs = run_fractaldimension(approach,Data,namefile)
+    graph_fractaldimension(approach,namefile,Les,Lcs)
 
     ##################################################
     #                STANDARD DEVIATION              #
     ##################################################
-    run_standarddeviation(Data,namefile,approach)
+    run_standarddeviation(approach,Data,namefile)
 
     ##################################################
     #                  FIXATION TIME                 #
     ##################################################
-    run_fixationtime(Data,namefile,approach)
+    run_fixationtime(approach,Data,namefile)
 
     ##################################################
     #                   LEMPEL-ZIV                   #
     ##################################################
-    run_lempelziv(Data,namefile,approach)
+    run_lempelziv(approach,Data,namefile)
 
 end
 
-run_quantifiers(datafiles_names[1],"Deterministic")
+#run_quantifiers(datafiles_names[1],"Deterministic")
+run_quantifiers(APPROACH,NAMEFILE)

@@ -34,21 +34,19 @@ end
 
 #Check correct input of parameters
 num_arguments = size(ARGS)[1]
-if num_arguments != 3
+if num_arguments == 1
+    APPROACH = "Deterministic"
+elseif num_arguments == 2
+    APPROACH = "Stochastic"
+else
     throw(ArgumentError("There should be 3 command line arguments, but there are "*string(num_arguments)))
 end
 
 #Obtain arguments and define them as global variables
-APPROACH = ARGS[1]
 #Selection intensity coefficient
-B = parse(Float64,ARGS[2])
+B = parse(Float64,ARGS[1])
 #Population size
-N = parse(Int64,ARGS[3])
-
-#The approach can only be "Deterministic" or "Stochastic"
-if APPROACH != "Deterministic" && APPROACH != "Stochastic"
-    throw(ArgumentError("The approach can only be Deterministic or Stochastic. It is case sensitive. Check spelling."))
-end
+N = parse(Int64,ARGS[2])
 
 #Time steps
 T = 100000

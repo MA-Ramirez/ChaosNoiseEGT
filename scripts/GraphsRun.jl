@@ -17,18 +17,20 @@ using LaTeXStrings
 #                                   Import data                                #
 ################################################################################
 
-
-#Obtain arguments and define them as global variables
+#Check correct input of parameters
 num_arguments = size(ARGS)[1]
-APPROACH = ARGS[1]
-B = ARGS[2]
-if num_arguments == 3
-    N = ARGS[3]
+if num_arguments == 1
+    APPROACH = "Deterministic"
+elseif num_arguments == 2
+    APPROACH = "Stochastic"
+else
+    throw(ArgumentError("There should be 3 command line arguments, but there are "*string(num_arguments)))
 end
 
-#The approach can only be "Deterministic" or "Stochastic"
-if APPROACH != "Deterministic" && APPROACH != "Stochastic"
-    throw(ArgumentError("The approach can only be Deterministic or Stochastic. It is case sensitive. Check spelling."))
+#Obtain arguments and define them as global variables
+B = ARGS[1]
+if num_arguments == 2
+    N = ARGS[2]
 end
 
 #From arguments define the name of the file to read
