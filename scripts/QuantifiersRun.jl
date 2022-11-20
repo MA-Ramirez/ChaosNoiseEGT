@@ -90,7 +90,7 @@ function graph_fractaldimension(approach,namefile,Les,Lcs)
 end
 
 """
-    run_fractaldimension(approach,data,namefile) → pdf file, txt file
+    run_fractaldimension(approach,data,namefile) → pdf file, csv file
 Run and save the fractal dimension of the data. Also graph the fractal
 dimension calculation plot.
 """
@@ -112,7 +112,7 @@ function run_fractaldimension(approach,data,namefile)
         params = [parse(Float64,B)]
         info_FD = adjoint(prepend!(FD,params))
         #The solution is saved in data/Quantifiers/QuantifiersDet
-        open(datadir("Quantifiers/QuantifiersDet", "Det_FD.txt"), "a") do io
+        open(datadir("Quantifiers/QuantifiersDet", "Det_FD.csv"), "a") do io
             writedlm(io, info_FD,",")
         end
     elseif approach == "Stochastic"
@@ -120,7 +120,7 @@ function run_fractaldimension(approach,data,namefile)
         params = [parse(Float64,B),parse(Int64,N)]
         info_FD = adjoint(prepend!(FD,params))
         #The solution is saved in data/Quantifiers/QuantifiersSto
-        open(datadir("Quantifiers/QuantifiersSto", "Sto_FD.txt"), "a") do io
+        open(datadir("Quantifiers/QuantifiersSto", "Sto_FD.csv"), "a") do io
             writedlm(io, info_FD,",")
         end
     end
@@ -132,7 +132,7 @@ end
 #                STANDARD DEVIATION              #
 ##################################################
 """
-    run_standarddeviation(approach,data,namefile) → txt file
+    run_standarddeviation(approach,data,namefile) → csv file
 Run and save the standard deviation of the data
 """
 function run_standarddeviation(approach,data,namefile)
@@ -143,7 +143,7 @@ function run_standarddeviation(approach,data,namefile)
         params = [parse(Float64,B)]
         info_std = adjoint(prepend!(std,params))
         #The solution is saved in data/Quantifiers/QuantifiersDet
-        open(datadir("Quantifiers/QuantifiersDet", "Det_Std.txt"), "a") do io
+        open(datadir("Quantifiers/QuantifiersDet", "Det_Std.csv"), "a") do io
             writedlm(io, info_std,",")
         end
     elseif approach == "Stochastic"
@@ -151,7 +151,7 @@ function run_standarddeviation(approach,data,namefile)
         params = [parse(Float64,B),parse(Int64,N)]
         info_std = adjoint(prepend!(std,params))
         #The solution is saved in data/Quantifiers/QuantifiersSto
-        open(datadir("Quantifiers/QuantifiersSto", "Sto_Std.txt"), "a") do io
+        open(datadir("Quantifiers/QuantifiersSto", "Sto_Std.csv"), "a") do io
             writedlm(io, info_std,",")
         end
     end
@@ -161,7 +161,7 @@ end
 #                  FIXATION TIME                 #
 ##################################################
 """
-    run_fixationtime(approach,data,namefile) → txt file
+    run_fixationtime(approach,data,namefile) → csv file
 Run and save the fixation time of the data
 """
 function run_fixationtime(approach,data,namefile)
@@ -172,7 +172,7 @@ function run_fixationtime(approach,data,namefile)
         params = [parse(Float64,B)]
         info_fixT = adjoint(prepend!(fixT,params))
         #The solution is saved in data/Quantifiers/QuantifiersDet
-        open(datadir("Quantifiers/QuantifiersDet", "Det_FixT.txt"), "a") do io
+        open(datadir("Quantifiers/QuantifiersDet", "Det_FixT.csv"), "a") do io
             writedlm(io, info_fixT,",")
         end
     elseif approach == "Stochastic"
@@ -180,7 +180,7 @@ function run_fixationtime(approach,data,namefile)
         params = [parse(Float64,B),parse(Int64,N)]
         info_fixT = adjoint(prepend!(fixT,params))
         #The solution is saved in data/Quantifiers/QuantifiersSto
-        open(datadir("Quantifiers/QuantifiersSto", "Sto_FixT.txt"), "a") do io
+        open(datadir("Quantifiers/QuantifiersSto", "Sto_FixT.csv"), "a") do io
             writedlm(io, info_fixT,",")
         end
     end
@@ -190,7 +190,7 @@ end
 #                   LEMPEL-ZIV                   #
 ##################################################
 """
-    run_lempelziv(approach,data,namefile) → txt file
+    run_lempelziv(approach,data,namefile) → csv file
 Run and save the Lempel-Ziv complexity measure of the data
 """
 function run_lempelziv(approach,data,namefile)
@@ -201,7 +201,7 @@ function run_lempelziv(approach,data,namefile)
         params = [parse(Float64,B)]
         info_LZ = adjoint(prepend!(LZ,params))
         #The solution is saved in data/Quantifiers/QuantifiersDet
-        open(datadir("Quantifiers/QuantifiersDet", "Det_LZ.txt"), "a") do io
+        open(datadir("Quantifiers/QuantifiersDet", "Det_LZ.csv"), "a") do io
             writedlm(io, info_LZ,",")
         end
     elseif approach == "Stochastic"
@@ -209,7 +209,7 @@ function run_lempelziv(approach,data,namefile)
         params = [parse(Float64,B),parse(Int64,N)]
         info_LZ = adjoint(prepend!(LZ,params))
         #The solution is saved in data/Quantifiers/QuantifiersSto
-        open(datadir("Quantifiers/QuantifiersSto", "Sto_LZ.txt"), "a") do io
+        open(datadir("Quantifiers/QuantifiersSto", "Sto_LZ.csv"), "a") do io
             writedlm(io, info_LZ,",")
         end
     end
@@ -248,5 +248,4 @@ function run_quantifiers(approach,namefile)
 
 end
 
-#run_quantifiers(datafiles_names[1],"Deterministic")
 run_quantifiers(APPROACH,NAMEFILE)
