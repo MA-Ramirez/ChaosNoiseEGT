@@ -52,7 +52,7 @@ if num_arguments == 1
 elseif num_arguments == 2
     APPROACH = "Stochastic"
 else
-    throw(ArgumentError("There should be 3 command line arguments, but there are "*string(num_arguments)))
+    throw(ArgumentError("There should be 2 command line arguments, but there are "*string(num_arguments)))
 end
 
 #Obtain arguments and define them as global variables
@@ -63,8 +63,6 @@ N = parse(Int64,ARGS[2])
 
 #Time steps
 T = set_timesteps(N)
-
-println(T)
 
 #Initial conditions
 ini_con = set_initial_conditions(N)

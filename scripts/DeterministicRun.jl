@@ -22,8 +22,15 @@ close to the center of the simplex
 """
 #Initial conditions
 ini_con = [0.25,0.25,0.25,0.25]
+
+#Check correct input of parameters
+num_arguments = size(ARGS)[1]
+if num_arguments != 1
+    throw(ArgumentError("There should be 1 command line argument B, but there are "*string(num_arguments)))
+end
+
 #Selection intensity coefficient
-B = 0.01
+B = parse(Float64,ARGS[1])
 
 #Dictionary of parameters
 params = @strdict B
