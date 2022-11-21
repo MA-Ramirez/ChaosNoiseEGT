@@ -28,6 +28,19 @@ function set_initial_conditions(populationsize)
     return [A_ini,B_ini,C_ini,D_ini]
 end
 
+"""
+    set_timesteps(populationsize) → Int64
+It sets the amount of time steps, such that the number of generations is fixed for
+all population sizes
+The constant factor is approximated visually, such that the time steps are enough to visualise
+the attractor and for the running time of the quantifiers doesn't explode
+"""
+function set_timesteps(populationsize)
+    constant_factor = 0.1
+    tau = Int(populationsize/constant_factor)
+    return tau
+end
+
 ################################################################################
 #                                Set parameters                                #
 ################################################################################
@@ -49,7 +62,9 @@ B = parse(Float64,ARGS[1])
 N = parse(Int64,ARGS[2])
 
 #Time steps
-T = 100000
+T = set_timesteps(N)
+
+println(T)
 
 #Initial conditions
 ini_con = set_initial_conditions(N)

@@ -44,27 +44,56 @@ ds = ContinuousDynamicalSystem(dynamic_rule_PCP!, ini_con, B)
 
 
 """
+    adaptive_timestep(Beta) → dataset
+Calculates the trajectory for a given Beta adjusting the time interval and the
+time step value, such that the number of time steps is fixed
+
+It uses the method
     trajectory(ds::GeneralizedDynamicalSystem, T [, u]; kwargs...) → dataset
 Return a dataset that will contain the trajectory of the system `ds`,
 after evolving it for total time `T`, optionally starting from state `u`.
 
 `Δt`: Time step of value output. For discrete systems it must be an integer. Defaults to 0.01
 
-Lower B requires a longer time interval to view the attractor. Therefore, use upper options
-for low B values, to keep time steps constant.
+Values to keep number of time steps constant, to be able to see the attractor for all beta values.
 
-`data = trajectory(ds,10000000; Δt = 100.0)`    --> B=0.001
-`data = trajectory(ds,1000000; Δt = 10.0)`      --> B=0.01
-`data = trajectory(ds,100000; Δt = 1.0)`        --> B=0.1
-`data = trajectory(ds,10000;Δt = 0.1)`          --> B=1.0 B=10.0
-`data = trajectory(ds,1000;Δt = 0.01)`          --> B=100.0
+Values to keep number of times step = 1x10^5 constant
+(Visual approx.)
+T = 10000000; Δt = 100.0     --> B=0.001
+T = 1000000; Δt = 10.0       --> B=0.005 B=0.01
+T = 100000; Δt = 1.0         --> B=0.05 B=0.1
+T = 10000; Δt = 0.1          --> B=0.5 B=1.0 B=10.0
+T = 1000; Δt = 0.01          --> B=100.0
 """
-data = trajectory(ds,1000000; Δt = 10.0)
+function adaptive_timestep(Beta)
+    T = 0
+    dt = 0
+    if Beta < 0.005
+        T = 10000000
+        dt = 100.0
+    elseif Beta < 0.05
+        T = 1000000
+        dt = 10.0
+    elseif Beta < 0.5
+        T = 100000
+        dt = 1.0
+    elseif Beta < 100.0
+        T = 10000
+        dt = 0.1
+    else
+        T = 1000
+        dt = 0.01
+    end
+    data = trajectory(ds,T; Δt = dt)
+    return data
+end
 
 ################################################################################
 #                                   Save data                                 #
 ################################################################################
 
+Data = adaptive_timestep(B)
+
 #Save solution of the ODEs system
 #The solution is saved in data/Deterministic
-writedlm(datadir("Deterministic", savename("Det", params, "txt")), data)
+writedlm(datadir("Deterministic", savename("Det", params, "txt")), Data)
