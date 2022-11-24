@@ -71,26 +71,14 @@ T = 1000000; Δt = 10.0       --> B=0.005 B=0.01
 T = 100000; Δt = 1.0         --> B=0.05 B=0.1
 T = 10000; Δt = 0.1          --> B=0.5 B=1.0 B=10.0
 T = 1000; Δt = 0.01          --> B=100.0
+
+From this aprox we get the relations
+T = 10^4/Beta
+dt = 0.1/Beta
 """
 function adaptive_timestep(Beta)
-    T = 0
-    dt = 0
-    if Beta < 0.005
-        T = 10000000
-        dt = 100.0
-    elseif Beta < 0.05
-        T = 1000000
-        dt = 10.0
-    elseif Beta < 0.5
-        T = 100000
-        dt = 1.0
-    elseif Beta < 100.0
-        T = 10000
-        dt = 0.1
-    else
-        T = 1000
-        dt = 0.01
-    end
+    T = 10^4/Beta
+    dt = 0.1/Beta
     data = trajectory(ds,T; Δt = dt)
     return data
 end
