@@ -90,11 +90,11 @@ function graph_fractaldimension(approach,namefile,Les,Lcs)
 end
 
 """
-    run_fractaldimension(approach,data,namefile) → pdf file, csv file
+    run_fractaldimension(approach,data) → pdf file, csv file
 Run and save the fractal dimension of the data. Also graph the fractal
 dimension calculation plot.
 """
-function run_fractaldimension(approach,data,namefile)
+function run_fractaldimension(approach,data)
     FD_info = fractal_dimension(data)
 
     #Fractal Dimension (Float64)
@@ -135,7 +135,7 @@ end
     run_standarddeviation(approach,data,namefile) → csv file
 Run and save the standard deviation of the data
 """
-function run_standarddeviation(approach,data,namefile)
+function run_standarddeviation(approach,data)
     std = standard_deviation(data)
 
     if approach == "Deterministic"
@@ -161,10 +161,10 @@ end
 #                  FIXATION TIME                 #
 ##################################################
 """
-    run_fixationtime(approach,data,namefile) → csv file
+    run_fixationtime(approach,data) → csv file
 Run and save the fixation time of the data
 """
-function run_fixationtime(approach,data,namefile)
+function run_fixationtime(approach,data)
     fixT = [Float64(fixation_time(data))]
 
     if approach == "Deterministic"
@@ -190,13 +190,13 @@ end
 #                   LEMPEL-ZIV                   #
 ##################################################
 """
-    run_lempelziv(approach,data,namefile) → csv file
+    run_lempelziv(approach,data) → csv file
 Run and save the Lempel-Ziv complexity measure of the data
 """
-function run_lempelziv(approach,data,namefile)
-    LZ = lempelzivdata(data)
-
+function run_lempelziv(approach,data)
     if approach == "Deterministic"
+        LZ = lempelzivdata(data)
+
         #Full info to be saved
         params = [parse(Float64,B)]
         info_LZ = adjoint(prepend!(LZ,params))
@@ -205,6 +205,8 @@ function run_lempelziv(approach,data,namefile)
             writedlm(io, info_LZ,",")
         end
     elseif approach == "Stochastic"
+        LZ = lempelzivdata_stochastic(data)
+
         #Full info to be saved
         params = [parse(Float64,B),parse(Int64,N)]
         info_LZ = adjoint(prepend!(LZ,params))
@@ -228,23 +230,23 @@ function run_quantifiers(approach,namefile)
     ##################################################
     #                 FRACTAL DIMENSION              #
     ##################################################
-    Les,Lcs = run_fractaldimension(approach,Data,namefile)
+    Les,Lcs = run_fractaldimension(approach,Data)
     graph_fractaldimension(approach,namefile,Les,Lcs)
 
     ##################################################
     #                STANDARD DEVIATION              #
     ##################################################
-    run_standarddeviation(approach,Data,namefile)
+    run_standarddeviation(approach,Data)
 
     ##################################################
     #                  FIXATION TIME                 #
     ##################################################
-    run_fixationtime(approach,Data,namefile)
+    run_fixationtime(approach,Data)
 
     ##################################################
     #                   LEMPEL-ZIV                   #
     ##################################################
-    run_lempelziv(approach,Data,namefile)
+    run_lempelziv(approach,Data)
 
 end
 

@@ -155,3 +155,32 @@ function lempelzivdata(data)
 
     return LZ_all
 end
+
+"""
+    lempelzivdata_stochastic(data) → Vector{Float64}
+Calculates Lempel-Ziv complexity measure for all the variables in data.
+ LZ is only measured for the last 100 elements of each variable, 
+    given that LZ is proportional to the length of the time series
+The final element is the average of the Lempel-Ziv measure of all variables.
+"""
+function lempelzivdata_stochastic(data)
+    num_variables = size(data)[2]
+
+    LZ_all = Vector{Float64}(undef,num_variables+1)
+
+    #LZ calculation for each variable
+    for i in 1:num_variables
+        #Only the last 100 elements of each variable
+        #  This measure is proportional to the length of the time series
+        binary_vector = binarise_vector(data[end-100:end,i])
+        LZ_vector = Float64(lempel_ziv_complexity(binary_vector))
+        LZ_all[i] = LZ_vector
+    end
+
+    #Mean of LZ measure of all variables
+    mean_LZ_all = mean(LZ_all[1:end-1])
+    #Add mean at the end of vector
+    LZ_all[end] = mean_LZ_all
+
+    return LZ_all
+end
