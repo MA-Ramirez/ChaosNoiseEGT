@@ -58,3 +58,9 @@ This will install all necessary packages for you to be able to run the scripts a
 everything should work out of the box, including correctly finding local paths.
 
 Note: to graph the ternary plots it is required to download the python package [mpltern](https://mpltern.readthedocs.io/en/latest/installation.html)
+
+To import the Python package `mpltern` via `pyimport`, open the Julia console and do:
+   ```
+   julia> using Conda
+   julia> Conda.add("mpltern")
+   ```

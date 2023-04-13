@@ -1,7 +1,3 @@
-"""
-Creates folder structures to store data and plots
-"""
-
 #data folders
 mkdir -p data/Deterministic
 mkdir -p data/Stochastic
