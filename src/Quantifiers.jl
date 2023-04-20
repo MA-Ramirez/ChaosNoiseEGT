@@ -9,6 +9,7 @@ Functions used to quantify relevant features of the dynamics.
 using DrWatson
 using DynamicalSystems
 using Statistics
+using FFTW
 
 ##################################################
 #                 FRACTAL DIMENSION              #
@@ -63,6 +64,25 @@ function standard_deviation(data)
     end
 
     return std_all
+end
+
+##################################################
+#                  FOURIER SPECTRUM              #
+##################################################
+"""
+    fourier_spectrum(data,xlim_val) → fourier spectrum plot
+Returns the fourier spectrum of a data set
+`xlim_val`: value of the xlim range
+"""
+function fourier_spectrum(data,xlim_val)
+    F = fft(data[:,1])
+    freqs = fftfreq(length(data[:,1]), 1.0/0.01)
+    plot(freqs, abs.(F))
+    #Aesthetics
+    xlim((-0.01,xlim_val))
+    xlabel("Frequency")
+    ylabel("Amplitude")
+    title("Fourier spectrum")
 end
 
 ##################################################
