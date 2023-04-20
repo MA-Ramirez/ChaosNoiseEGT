@@ -22,7 +22,7 @@ using LaTeXStrings
 This parameter is used also for folder organisation purposes
 Imports data from files and returns each variables' info in a vector
 """
-function getdata(approach,namefile)
+function getdata(approach::String,namefile)
     if approach == "Deterministic"
         data = readdlm(datadir("Deterministic", namefile))
     elseif approach == "Stochastic"
@@ -42,11 +42,12 @@ end
 #                         Graph generation functions                           #
 ################################################################################
 
+##################################################
+#                    Ternary plot                #
+##################################################
+
 """
-    ternary_plot(approach,namefile,x1,x2,x3) → pdf file
-`approach`: defines if Deterministic or Stochastic will be analysed.
-This parameter is used also for folder organisation purposes
-`namefile`: name of the file with the data
+    ternary_plot(approach,namefile,x1,x2,x3) → plot
 `x1`,`x2`,`x3`: vectors with variables data
 
 Generates simplex using mpltern package.
@@ -81,9 +82,19 @@ function ternary_plot(x1,x2,x3)
     plt.tight_layout()
 end
 
-################################################################################
+#------ Save data ------
 
-function ternary_plot_save(approach,namefile,x1,x2,x3)
+"""
+    ternary_plot_save(approach,namefile,x1,x2,x3) → pdf file
+
+`approach`: defines if Deterministic or Stochastic will be analysed.
+This parameter is used also for folder organisation purposes
+`namefile`: name of the file with the data
+`x1`,`x2`,`x3`: vectors with variables data
+
+It saves the generated ternary plot as a pdf file.
+"""
+function ternary_plot_save(approach::String,namefile,x1,x2,x3)
 
     ternary_plot(x1,x2,x3)
 
@@ -98,77 +109,86 @@ function ternary_plot_save(approach,namefile,x1,x2,x3)
     plt.clf()
 end
 
+##################################################
+#                    Time series                 #
+##################################################
 
 """
-    timeseries(approach,namefile,x1,x2,x3,x4) → pdf file
+    timeseries(x1,x2,x3,x4) → plot
+`x1`,`x2`,`x3`,`x4`: vectors with variables data
+`xlim`: determines the x-axis limit
+
+Generates timeseries plot with all the variables.
+"""
+function timeseries(x1,x2,x3,x4; xlim::Int64 = length(x1))
+
+    #Time vector
+    t = Vector(1:length(x1))
+
+    #Plot
+    plt.plot(t,x1, c="darkgoldenrod", label = L"x_1")
+    plt.plot(t,x2, c="b", label = L"x_2")
+    plt.plot(t,x3, c="r", label = L"x_3")
+    plt.plot(t,x4, c="deepskyblue", label = L"x_4")
+    #Aesthetics
+    plt.xlabel("Time steps (t)")
+    plt.ylabel(L"x_k")
+    plt.legend(loc="center left", bbox_to_anchor=(1, 0.5))
+    #keyword argument modifies
+    plt.xlim((0,xlim))
+
+    plt.tight_layout()
+end
+
+#------ Save data ------
+
+"""
+    timeseries_save(approach::String,namefile,x1,x2,x3,x4) → pdf file
 `approach`: defines if Deterministic or Stochastic will be analysed.
 This parameter is used also for folder organisation purposes
 `namefile`: name of the file with the data
 `x1`,`x2`,`x3`,`x4`: vectors with variables data
 
-Generates timeseries graph with all the variables.
+Generates timeseries plot with all the variables.
 """
-function timeseries(approach,namefile,x1,x2,x3,x4)
+function timeseries_save(approach::String,namefile,x1,x2,x3,x4)
+    timeseries(x1,x2,x3,x4)
 
-    #Time vector
-    t = Vector(1:length(x1))
-
-    #Original time interval
-    plt.plot(t,x1, c="darkgoldenrod", label = L"x_1")
-    plt.plot(t,x2, c="b", label = L"x_2")
-    plt.plot(t,x3, c="r", label = L"x_3")
-    plt.plot(t,x4, c="purple", label = L"x_4")
-    plt.title(L"x_k"*"vs t")
-    plt.xlabel("Time steps (t)")
-    plt.ylabel(L"x_k")
-    plt.legend(loc="center left", bbox_to_anchor=(1, 0.5))
-    plt.tight_layout()
-
-    #Save settings
-    if approach == "Deterministic"
+     #Save settings
+     if approach == "Deterministic"
         #CREATE FIRST THE SUBFOLDER "Deterministic/TernaryDet" IN THE "Plots" FOLDER
-        plt.savefig(plotsdir("Deterministic/TimeseriesDet",namefile[1:end-3]*String("_TS.pdf")))
+        plt.savefig(plotsdir("Deterministic/TimeseriesDet",namefile[1:end-4]*String("_TS.pdf")))
     elseif approach == "Stochastic"
         #CREATE FIRST THE SUBFOLDER "Stochastic/TernarySto" IN THE "Plots" FOLDER
-        plt.savefig(plotsdir("Stochastic/TimeseriesSto",namefile[1:end-3]*String("_TS.pdf")))
+        plt.savefig(plotsdir("Stochastic/TimeseriesSto",namefile[1:end-4]*String("_TS.pdf")))
     end
     plt.clf()
 end
 
+##################################################
+#                  Time series zoom              #
+##################################################
+
 """
-    timeseries_zoom(approach,namefile,x1,x2,x3,x4) → pdf file
+    timeseries_zoom_save(approach::String,namefile,x1,x2,x3,x4; kwargs...) → pdf file
 `approach`: defines if Deterministic or Stochastic will be analysed.
 This parameter is used also for folder organisation purposes
 `namefile`: name of the file with the data
 `x1`,`x2`,`x3`,`x4`: vectors with variables data
 
-Generates timeseries graph with all the variables.
+Generates timeseries plot with all the variables.
 It zooms over the first 100 time steps.
 """
-function timeseries_zoom(approach,namefile,x1,x2,x3,x4)
+function timeseries_zoom_save(approach::String,namefile,x1,x2,x3,x4; xlim=100)
+    timeseries(x1,x2,x3,x4;xlim)
 
-    #Time vector
-    t = Vector(1:length(x1))
-
-    #Original time interval
-    plt.plot(t,x1, c="darkgoldenrod", label = L"x_1")
-    plt.plot(t,x2, c="b", label = L"x_2")
-    plt.plot(t,x3, c="r", label = L"x_3")
-    plt.plot(t,x4, c="purple", label = L"x_4")
-    plt.title(L"x_k"*"vs t")
-    plt.xlabel("Time steps (t)")
-    plt.ylabel(L"x_k")
-    plt.legend(loc="center left", bbox_to_anchor=(1, 0.5))
-    plt.xlim((0,100))
-    plt.tight_layout()
-
-    #Save settings
-    if approach == "Deterministic"
+     #Save settings
+     if approach == "Deterministic"
         #CREATE FIRST THE SUBFOLDER "Deterministic/TernaryDet" IN THE "Plots" FOLDER
-        plt.savefig(plotsdir("Deterministic/TimeseriesDet",namefile[1:end-3]*String("_TS_Zoom.pdf")))
+        plt.savefig(plotsdir("Deterministic/TimeseriesDet",namefile[1:end-4]*String("_TS_Zoom.pdf")))
     elseif approach == "Stochastic"
         #CREATE FIRST THE SUBFOLDER "Stochastic/TernarySto" IN THE "Plots" FOLDER
-        plt.savefig(plotsdir("Stochastic/TimeseriesSto",namefile[1:end-3]*String("_TS_Zoom.pdf")))
+        plt.savefig(plotsdir("Stochastic/TimeseriesSto",namefile[1:end-4]*String("_TS_Zoom.pdf")))
     end
     plt.clf()
 end
