@@ -10,38 +10,6 @@ include(srcdir("StochasticSRC.jl"))
 using DelimitedFiles
 
 ################################################################################
-#                          Set parameters functions                            #
-################################################################################
-
-"""
-    set_initial_conditions(populationsize) → Vector{Float64}
-The Skyrms' attractor can be properly seen starting with initial conditions
-close to the center of the simplex
-"""
-function set_initial_conditions(populationsize)
-    scaling_factor = 0.25
-    #Amount of individuals is an integer
-    A_ini = round(populationsize*scaling_factor)
-    B_ini = A_ini
-    C_ini = A_ini
-    D_ini = A_ini
-    return [A_ini,B_ini,C_ini,D_ini]
-end
-
-"""
-    set_timesteps(populationsize) → Int64
-It sets the amount of time steps, such that the number of generations is fixed for
-all population sizes
-The constant factor is approximated visually, such that the time steps are enough to visualise
-the attractor and for the running time of the quantifiers doesn't explode
-"""
-function set_timesteps(populationsize)
-    constant_factor = 0.1
-    tau = Int(populationsize/constant_factor)
-    return tau
-end
-
-################################################################################
 #                                Set parameters                                #
 ################################################################################
 
@@ -74,9 +42,7 @@ params = @strdict B N
 #                                   Run process                                #
 ################################################################################
 
-data_full_process = run_process(ini_con, N, B, T)
-
-data = normalise_data(data_full_process, N)
+data = run_full_simulation(ini_con, B, N, T)
 
 ################################################################################
 #                                   Save data                                  #

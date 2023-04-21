@@ -6,6 +6,11 @@ using DrWatson
 
 include(srcdir("PayoffMatrix.jl"))
 
+
+################################################################################
+#                      PAIRWISE COMPARISON PROCESS functions                   #
+################################################################################
+
 """
     picktype_randomly(num_types) → Int64
 Randomly picks a type among the different types present in the population
@@ -90,7 +95,7 @@ function step(amounts,B)
 end
 
 ################################################################################
-#                              RUN PROCESS FUNCTIONS                           #
+#                              RUN PROCESS functions                           #
 ################################################################################
 
 """
@@ -109,12 +114,12 @@ function reach_boundary(amounts)
 end
 
 """
-    run_process(initial_amounts, populationsize, Beta, time_steps) → Vector{Any}
+    run_process(initial_amounts, Beta, time_steps) → Vector{Any}
 `Beta`: selection intensity coefficient
 It runs the pairwise comparison process step for `time_steps` amount of times.
 It returns an array of arrays with the data of the evolution of the process
 """
-function run_process(initial_amounts, populationsize, Beta, time_steps)
+function run_process(initial_amounts, Beta, time_steps)
     data_process = []
 
     #Initialise first entry with initial conditions
@@ -151,4 +156,60 @@ function normalise_data(data_trajectory, populationsize)
     end
 
     return normalised_data
+end
+
+"""
+    run_full_simulation(initial_amounts, Beta, populationsize, time_steps) → Vector{Vector{Float64}}
+`Beta`: selection intensity coefficient
+It runs the pairwise comparison process step for `time_steps` amount of times.
+It returns an array of arrays with the data of the evolution of the process.
+The data is normalised, so the quantities are given in relative amounts.
+"""
+function run_full_simulation(initial_amounts, Beta, populationsize, time_steps)
+    data_process = run_process(initial_amounts, Beta, time_steps)
+    normalised_data = normalise_data(data_process, populationsize)
+
+    return normalised_data
+end
+
+"""
+    full_simulation(initial_amounts, Beta, populationsize, time_steps) → Matrix{Float64}
+Returns the results of `run_full_simulation` for easier data handling in the notebook
+"""
+function full_simulation(initial_amounts, Beta, populationsize, time_steps)
+    data_vectors = run_full_simulation(initial_amounts, Beta, populationsize, time_steps)
+    data_matrix = reduce(vcat,transpose.(data_vectors))
+    return data_matrix
+end
+
+################################################################################
+#                          SET PARAMETERS functions                            #
+################################################################################
+
+"""
+    set_initial_conditions(populationsize) → Vector{Float64}
+The Skyrms' attractor can be properly seen starting with initial conditions
+close to the center of the simplex
+"""
+function set_initial_conditions(populationsize)
+    scaling_factor = 0.25
+    #Amount of individuals is an integer
+    A_ini = round(populationsize*scaling_factor)
+    B_ini = A_ini
+    C_ini = A_ini
+    D_ini = A_ini
+    return [A_ini,B_ini,C_ini,D_ini]
+end
+
+"""
+    set_timesteps(populationsize) → Int64
+It sets the amount of time steps, such that the number of generations is fixed for
+all population sizes
+The constant factor is approximated visually, such that the time steps are enough to visualise
+the attractor and for the running time of the quantifiers doesn't explode
+"""
+function set_timesteps(populationsize)
+    constant_factor = 0.1
+    tau = Int(populationsize/constant_factor)
+    return tau
 end
