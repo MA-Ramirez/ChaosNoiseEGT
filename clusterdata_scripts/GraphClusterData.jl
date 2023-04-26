@@ -148,7 +148,7 @@ function graph_cluster_run(measure)
 
     #Output
     plt.tight_layout()
-    plt.savefig(plotsdir("General/","General_"*measure*".pdf"))
+    plt.savefig(plotsdir("GeneralQuantifiers/","General_"*measure*".pdf"))
     plt.clf()
 end
 

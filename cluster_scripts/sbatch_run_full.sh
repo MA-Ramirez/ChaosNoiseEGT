@@ -11,9 +11,9 @@
 input="cluster_scripts/Parameters.txt"
 while IFS= read -r line
 do
-  module load julia/1.7.0
+  module load julia/1.8.5
     julia scripts/StochasticRun.jl $line
-    #julia scripts/GraphsRun.jl $line
+    julia scripts/GraphsRun.jl $line
     julia scripts/QuantifiersRun.jl $line
-  module unload julia/1.7.0
+  module unload julia/1.8.5
 done < "$input"
