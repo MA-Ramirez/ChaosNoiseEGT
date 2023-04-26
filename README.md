@@ -88,7 +88,8 @@ _To import the Python package `mpltern` via `pyimport`, open the Julia console a
    ```
    ChaosNoiseEGT$ bash FolderStructure.sh
    ```
-
+   
+```
    .
    ├── ...
    ├── plots                        # plot files (pdf format)
