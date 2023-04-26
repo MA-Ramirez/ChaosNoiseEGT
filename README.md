@@ -89,7 +89,6 @@ _To import the Python package `mpltern` via `pyimport`, open the Julia console a
    ChaosNoiseEGT$ bash FolderStructure.sh
    ```
 
-```
    .
    ├── ...
    ├── plots                        # plot files (pdf format)
@@ -111,4 +110,3 @@ _To import the Python package `mpltern` via `pyimport`, open the Julia console a
    │        ├── QuantifiersSto       #Stochastic quantifiers
    │        └── ClusterQuantifiers   #Cluster data quanifiers (stochastic runs)
    └── ...
-```
