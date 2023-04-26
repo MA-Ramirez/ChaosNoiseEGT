@@ -14,8 +14,8 @@ Given any payoff matrix defined in `src/PayoffMatrix.jl`, the system can be evol
 
 *Interactive notebooks*
 To explore the dynamics of different parameters values, run the code via the interactive notebooks:
-* Deterministic approach
-* Stochastic approach
+* [Deterministic description](https://github.com/MA-Ramirez/ChaosNoiseEGT/blob/main/notebooks/Interactive_Deterministic.ipynb)
+* [Stochastic description](https://github.com/MA-Ramirez/ChaosNoiseEGT/blob/main/notebooks/Interactive_Stochastic.ipynb)
 
 ## Code outline
 ![GeneralScheme](GeneralScheme.png "GeneralScheme")
@@ -47,8 +47,8 @@ To get an accurate interpretation of the stochastic simulation results, it is re
 
 -To run the simulations in the cluster
    - Run all stochastic approach scripts in terminal: `bash bash_run_full.sh`
-   - Submit stochastic approach batch scripts to Slurm (full process of 3 scripts for all parameters in `Parameters.txt`):  `sbatch sbatch_run_full.sh`
-   - Submit individual stochastic approach batch scripts to Slurm (full process of 3 scripts for each parameter in `Parameters.txt`):  `sbatch sbatch_run_individuals_1.sh`
+   - Submit stochastic approach batch scripts to Slurm (full process of 3 scripts for all parameter values in `Parameters.txt`):  `sbatch sbatch_run_full.sh`
+   - Submit individual stochastic approach batch scripts to Slurm (full process of 3 scripts for each parameter value in `Parameters.txt`):  `sbatch sbatch_run_individuals_1.sh`
 
 -To obtain the main statistical measures of the quantifiers results: `julia clusterdata_scripts/ManageClusterData.jl`
 
