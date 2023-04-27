@@ -54,6 +54,8 @@ To get an accurate interpretation of the stochastic simulation results, it is re
 
 -To graph the quantifiers results: `julia clusterdata_scripts/GraphClusterData.jl`
 
+_Note: before running the Julia scripts in a cluster, make sure to load the corresponding Julia version and packages of the project_
+
 -------
 ## Reproducibility
 This code base is using the Julia Language and [DrWatson](https://juliadynamics.github.io/DrWatson.jl/stable/)

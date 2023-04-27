@@ -9,7 +9,7 @@
 #SBATCH --mail-type=FAIL                  #Send email at BEGIN, END, FAIL, REQUEUE, ALL
 
 module load julia/1.8.5
-  julia scripts/StochasticRun.jl $1 $2
-  julia scripts/GraphsRun.jl $1 $2
-  julia scripts/QuantifiersRun.jl $1 $2
+  julia --project=. scripts/StochasticRun.jl $1 $2
+  julia --project=. scripts/GraphsRun.jl $1 $2
+  julia --project=. scripts/QuantifiersRun.jl $1 $2
 module unload julia/1.8.5
