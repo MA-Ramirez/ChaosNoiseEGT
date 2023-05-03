@@ -86,6 +86,23 @@ function fourier_spectrum(data,xlim_val)
 end
 
 ##################################################
+#              PERMUTATION ENTROPY               #
+##################################################
+
+"""
+    permutation_entropy(data) → Float64 
+Returns the normalised permutation entropy value of order 6
+"""
+function permutation_entropy(data)
+    #any variable gives the same behaviour
+    dataset = data[:,1]
+    order_value = 6
+    normalisation_cte = 1/(log(factorial(order_value)))
+    PE = normalisation_cte*entropy(SymbolicPermutation(; m=order_value, τ=1), dataset)
+    return PE
+end
+
+##################################################
 #                  FIXATION TIME                 #
 ##################################################
 """

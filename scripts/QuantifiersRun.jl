@@ -158,6 +158,35 @@ function run_standarddeviation(approach,data)
 end
 
 ##################################################
+#              PERMUTATION ENTROPY               #
+##################################################
+"""
+    run_permutationentropy(approach,data) → csv file
+Run and save the permutation entropy of the data
+"""
+function run_permutationentropy(approach,data)
+    PE = [permutation_entropy(data)]
+
+    if approach == "Deterministic"
+        #Full info to be saved
+        params = [parse(Float64,B)]
+        info_PE = adjoint(prepend!(PE,params))
+        #The solution is saved in data/Quantifiers/QuantifiersDet
+        open(datadir("Quantifiers/QuantifiersDet", "Det_PE.csv"), "a") do io
+            writedlm(io, info_PE,",")
+        end
+    elseif approach == "Stochastic"
+        #Full info to be saved
+        params = [parse(Float64,B),parse(Int64,N)]
+        info_PE = adjoint(prepend!(PE,params))
+        #The solution is saved in data/Quantifiers/QuantifiersSto
+        open(datadir("Quantifiers/QuantifiersSto", "Sto_PE.csv"), "a") do io
+            writedlm(io, info_PE,",")
+        end
+    end
+end
+
+##################################################
 #                  FIXATION TIME                 #
 ##################################################
 """
@@ -230,23 +259,28 @@ function run_quantifiers(approach,namefile)
     ##################################################
     #                 FRACTAL DIMENSION              #
     ##################################################
-    Les,Lcs = run_fractaldimension(approach,Data)
-    graph_fractaldimension(approach,namefile,Les,Lcs)
+    #Les,Lcs = run_fractaldimension(approach,Data)
+    #graph_fractaldimension(approach,namefile,Les,Lcs)
 
     ##################################################
     #                STANDARD DEVIATION              #
     ##################################################
-    run_standarddeviation(approach,Data)
+    #run_standarddeviation(approach,Data)
+
+     ##################################################
+    #                   PERMUTATION ENTROPY           #
+    ##################################################
+    run_permutationentropy(approach,Data)
 
     ##################################################
     #                  FIXATION TIME                 #
     ##################################################
-    run_fixationtime(approach,Data)
+    #run_fixationtime(approach,Data)
 
     ##################################################
     #                   LEMPEL-ZIV                   #
     ##################################################
-    run_lempelziv(approach,Data)
+    #run_lempelziv(approach,Data)
 
 end
 
