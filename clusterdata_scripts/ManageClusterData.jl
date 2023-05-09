@@ -127,7 +127,7 @@ end
 
 ################################################################################
 
-Measures = ["FD","FixT","LZ","Std"]
+Measures = ["FD","Std","PE","FixT","LZ"]
 
 for i in Measures
     run_managedata(i)
