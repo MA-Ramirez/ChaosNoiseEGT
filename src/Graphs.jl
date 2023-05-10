@@ -120,7 +120,7 @@ end
 
 Generates timeseries plot with all the variables.
 """
-function timeseries(x1,x2,x3,x4; xlim::Int64 = length(x1))
+function timeseries(x1,x2,x3,x4; xmin::Int64 = 0, xmax::Int64 = length(x1))
 
     #Time vector
     t = Vector(1:length(x1))
@@ -135,7 +135,7 @@ function timeseries(x1,x2,x3,x4; xlim::Int64 = length(x1))
     plt.ylabel(L"x_k")
     plt.legend(loc="center left", bbox_to_anchor=(1, 0.5))
     #keyword argument modifies
-    plt.xlim((0,xlim))
+    plt.xlim((xmin,xmax))
 
     plt.tight_layout()
 end
@@ -179,8 +179,8 @@ This parameter is used also for folder organisation purposes
 Generates timeseries plot with all the variables.
 It zooms over the first 100 time steps.
 """
-function timeseries_zoom_save(approach::String,namefile,x1,x2,x3,x4; xlim=100)
-    timeseries(x1,x2,x3,x4;xlim)
+function timeseries_zoom_save(approach::String,namefile,x1,x2,x3,x4; xmin = 0, xmax=100)
+    timeseries(x1,x2,x3,x4;xmin, xmax)
 
      #Save settings
      if approach == "Deterministic"
