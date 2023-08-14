@@ -5,7 +5,7 @@ Script used to determine the parameters for which the stochastic simulations wil
 using DelimitedFiles
 
 BN = [0,50.0,75.0,100.0,250.0,500.0,750.0,1000.0]
-N = [100,250,500,750,1000,2500,5000,7500,10000,25000,50000]
+N = [100,250,500,1000,2500,5000,10000,25000,50000]
 
 for i in BN
     for j in N
