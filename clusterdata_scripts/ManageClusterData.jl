@@ -73,10 +73,10 @@ end
 
 """
     fill_avg_file(quantifier_vals_tuple, tuple, measure) → txt file
-`quantifier_vals_tuple`: vector with values of quantifier corresponding to the tuple (B,N)
-`tuple`: (B,N)
+`quantifier_vals_tuple`: vector with values of quantifier corresponding to the tuple (BN,N)
+`tuple`: (BN,N)
 `measure`: defines the quantifier to be calculated
-Fills the file containing the mean values of the quantifiers for each tuple (B,N)
+Fills the file containing the mean values of the quantifiers for each tuple (BN,N)
 It obtains the average of the quantifier for each tuple for all the stochastic runs
 """
 function fill_avg_file(quantifier_vals_tuple, tuple, measure)
@@ -93,10 +93,10 @@ end
 
 """
     fill_errorbar_file(quantifier_vals_tuple, tuple, measure) → txt file
-`quantifier_vals_tuple`: vector with values of quantifier corresponding to the tuple (B,N)
-`tuple`: (B,N)
+`quantifier_vals_tuple`: vector with values of quantifier corresponding to the tuple (BN,N)
+`tuple`: (BN,N)
 `measure`: defines the quantifier to be calculated
-Fills the file containing the errorbar values of the quantifiers for each tuple (B,N)
+Fills the file containing the errorbar values of the quantifiers for each tuple (BN,N)
 It obtains the standard deviation of the quantifier for each tuple for all the stochastic runs
 """
 function fill_errorbar_file(quantifier_vals_tuple, tuple, measure)
@@ -140,9 +140,7 @@ end
 
 ################################################################################
 
-#Measures = ["FD","Std","PE","FixT","LZ"]
 Measures = ["FD","Std","PE","LZ"]
-#Measures = ["FD"]
 
 for i in Measures
     run_managedata(i)

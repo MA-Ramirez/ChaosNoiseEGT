@@ -64,8 +64,6 @@ end
 ################################################################################
 
 """
-The graph shows the information of each Beta in a seperate plot on the same graph
-
     get_colors(betas) → Vector{NTuple{4, Float64}}
 Given n number of different unique beta values in data, returns an array of n colors
 in (red,blue,green,alpha) format using the color map "inferno"
@@ -83,15 +81,15 @@ end
 """
     graph_cluster_run(measure) → pdf file
 Generates pdf file for specified `measure`
-For each unique beta value in the stochatic simulation runs, it graphs the
-average of the quantifier for all the runs, the errobar and the deterministic
-quantifier value
+For each unique BN value in the stochatic simulation runs, it graphs the
+average of the quantifier for all the runs, along with the errorbar
+It also graphs the deterministic quantifier for each B value
 """
 function graph_cluster_run(measure)
 
     #Get and define data avg runs
     Data = get_avg_data(measure)
-    beta_values = Data[:,1]
+    BN_values = Data[:,1]
     N_values = Data[:,2]
     variable_values = Data[:,end]
 
@@ -105,34 +103,39 @@ function graph_cluster_run(measure)
     det_vals = Det_data[:,end]
 
     #Get unique values of data run
-    B = sort(find_unique_values(Data[:,1]))
-    N = find_unique_values(Data[:,2])
+    BN = sort(find_unique_values(Data[:,1]))
 
     #Get colors for each plot
-    colors = get_colors(B)
+    colors = get_colors(BN)
 
-    #Generate plots for each unique beta
-    sizeB = size(B)[1]
+    #--------PLOT STOCHASTIC------
+    #Label BN
+    plt.plot([],[],color="white", label=L"\beta N")
+    #Generate plots for each unique BN
+    sizeB = size(BN)[1]
     for i in 1:sizeB
-        Betas = reverse(B)
-        indexarray = findall( b -> b == Betas[i], beta_values)
-        plt.scatter(N_values[indexarray],variable_values[indexarray],label=string(Betas[i]),color=colors[i])
+        BNs = reverse(BN)
+        indexarray = findall( b -> b == BNs[i], BN_values)
+
+        plt.scatter(N_values[indexarray],variable_values[indexarray],label=string(BNs[i]),color=colors[i])
         plt.plot(N_values[indexarray],variable_values[indexarray],color=colors[i])
         plt.errorbar(N_values[indexarray],variable_values[indexarray],yerr=err_values[indexarray],color=colors[i])
         plt.fill_between(N_values[indexarray],variable_values[indexarray]-err_values[indexarray],variable_values[indexarray]+err_values[indexarray],color=colors[i],alpha=0.1)
-
-        if Betas[i] != 0
-            #Plot deterministic
-            indexarrayDET = findall( b -> b == Betas[i], det_beta_values)
-            plt.scatter(10^7,det_vals[indexarrayDET],color=colors[i])
-        end
-
     end
 
-    #Aesthetics
+    #--------PLOT DETERMINISTIC------
+    #Label B
+    plt.plot([],[],color="white", label=L"\beta")
+    #Generate plots for each unique beta
+    for i in 1:sizeB-1
+        indexarrayDET = findall( b -> b == reverse(det_beta_values)[i], det_beta_values)
+        plt.scatter(10^7,det_vals[indexarrayDET],label=string(reverse(det_beta_values)[i]),color=colors[i],marker="^")
+    end 
+
+    #General Aesthetics
     plt.xscale("log")
     plt.xlabel("Population size (N)")
-    plt.legend(title =L"\beta",loc="center left", bbox_to_anchor=(1, 0.5))
+    plt.legend(loc="center left", bbox_to_anchor=(1, 0.5), ncol=2)
     plt.xticks([10^2,10^3,10^4,10^5,10^7],[L"10^2",L"10^3",L"10^4",L"10^5","Deterministic"])
 
     #ylabel
@@ -144,6 +147,8 @@ function graph_cluster_run(measure)
         plt.ylabel("Lempel-Ziv complexity ("*L"C_{LZ}"*")")
     elseif measure == "Std"
         plt.ylabel("Standard deviation ("*L"\sigma"*")")
+    elseif measure == "PE"
+        plt.ylabel("Permutation entropy ("*L"PE"*")")
     end
 
     #Output
@@ -154,7 +159,7 @@ end
 
 ################################################################################
 
-Measures = ["FD","Std","PE","FixT","LZ"]
+Measures = ["FD","Std","PE"]
 
 for i in Measures
     graph_cluster_run(i)
