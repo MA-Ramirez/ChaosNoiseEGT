@@ -47,7 +47,7 @@ end
 ##################################################
 
 """
-    ternary_plot(approach,namefile,x1,x2,x3) → plot
+    ternary_plot(x1,x2,x3) → plot
 `x1`,`x2`,`x3`: vectors with variables data
 
 Generates simplex using mpltern package.
@@ -85,7 +85,7 @@ end
 #------ Save data ------
 
 """
-    ternary_plot_save(approach,namefile,x1,x2,x3) → pdf file
+    ternary_plot_save(approach::String,namefile,x1,x2,x3) → pdf file
 
 `approach`: defines if Deterministic or Stochastic will be analysed.
 This parameter is used also for folder organisation purposes
@@ -107,6 +107,47 @@ function ternary_plot_save(approach::String,namefile,x1,x2,x3)
         plt.savefig(plotsdir("Stochastic/TernarySto",namefile[1:end-3]*String("pdf")))
     end
     plt.clf()
+end
+
+"""
+    ternary_plot_depth(x1,x2,x3,x4) → plot
+`x1`,`x2`,`x3`,`x4`: vectors with variables data
+
+Generates simplex using mpltern package. Color represents the 4th variable.
+Mpltern is a Python plotting library based on Matplotlib specifically designed
+for ternary plots.
+A similar library with the quality of mpltern is not yet available in Julia.
+"""
+function ternary_plot_depth(x1,x2,x3,x4)
+    ax = plt.subplot(projection="ternary")
+
+    #Generate plot
+    scatterplot = ax.scatter(x1,x2,x3,c=x4,s=0.5,alpha=0.5,edgecolors="none")
+
+    #Initialize grid
+    ax.grid(linestyle="--",linewidth=0.5,alpha=0.5)
+
+    #Set labels
+    ax.set_tlabel(L"x_1")
+    ax.set_llabel(L"x_2")
+    ax.set_rlabel(L"x_3")
+
+    # Color ticks, grids, tick-labels
+    ax.taxis.set_tick_params(tick2On=true, colors="darkgoldenrod", grid_color="darkgoldenrod")
+    ax.laxis.set_tick_params(tick2On=true, colors="b", grid_color="b")
+    ax.raxis.set_tick_params(tick2On=true, colors="r", grid_color="r")
+
+    # Color labels
+    ax.taxis.label.set_color("darkgoldenrod")
+    ax.laxis.label.set_color("b")
+    ax.raxis.label.set_color("r")
+
+    # Color bar 
+    cax = ax.inset_axes([1.05, 0.1, 0.05, 0.9], transform=ax.transAxes)
+    colorbar = plt.colorbar(scatterplot, cax=cax)
+    colorbar.set_label(L"x_4",rotation=270, va="baseline")
+
+    plt.tight_layout()
 end
 
 ##################################################
