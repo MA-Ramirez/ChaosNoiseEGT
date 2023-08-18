@@ -265,12 +265,12 @@ function run_quantifiers(approach,namefile)
     ##################################################
     #                STANDARD DEVIATION              #
     ##################################################
-    #run_standarddeviation(approach,Data)
+    run_standarddeviation(approach,Data)
 
      ##################################################
     #                   PERMUTATION ENTROPY           #
     ##################################################
-    run_permutationentropy(approach,Data)
+    #run_permutationentropy(approach,Data)
 
     ##################################################
     #                  FIXATION TIME                 #

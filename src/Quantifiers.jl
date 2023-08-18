@@ -54,14 +54,17 @@ end
 """
     standard_deviation(data) → Vector{Float64}
 Calculates the standard deviation for all variables in data.
+The final value of the list is the average of all the calculated standard deviations.
 """
 function standard_deviation(data)
-    std_all = Vector{Float64}(undef,size(data)[2])
+    std_all = Vector{Float64}(undef,size(data)[2]+1)
 
-    for i in 1:size(data)[2]
+    for i in 1:size(data)[2]-1
         std_xi = round(std(data[:,i]),digits=3)
         std_all[i] = std_xi
     end
+
+    std_all[end] = mean(std_all[1:end-1])
 
     return std_all
 end
