@@ -148,7 +148,7 @@ function graph_cluster_run(measure)
     elseif measure == "Std"
         plt.ylabel("Standard deviation ("*L"\sigma"*")")
     elseif measure == "PE"
-        plt.ylabel("Permutation entropy ("*L"PE"*")")
+        plt.ylabel("Permutation entropy ("*L"H"*")")
     end
 
     #Output

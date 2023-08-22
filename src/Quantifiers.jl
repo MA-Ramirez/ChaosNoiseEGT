@@ -59,7 +59,7 @@ The final value of the list is the average of all the calculated standard deviat
 function standard_deviation(data)
     std_all = Vector{Float64}(undef,size(data)[2]+1)
 
-    for i in 1:size(data)[2]-1
+    for i in 1:size(data)[2]
         std_xi = round(std(data[:,i]),digits=3)
         std_all[i] = std_xi
     end
