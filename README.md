@@ -47,8 +47,8 @@ To get an accurate interpretation of the stochastic simulation results, it is re
 
 -To run the simulations in the cluster
    - Run all stochastic approach scripts in terminal: `bash bash_run_full.sh`
-   - Submit stochastic approach batch scripts to Slurm (full process of 3 scripts for all parameter values in `Parameters.txt` implicitly using `sbatch sbatch_run_full.sh`):  `bash clusterdata_scripts/Run_fullJobs_allFolders.sh`
-   - Submit individual stochastic approach batch scripts to Slurm (full process of 3 scripts for each parameter value in `Parameters.txt` implicitly using `sbatch sbatch_run_individuals_1.sh`):  `bash clusterdata_scripts/Run_individualsJobs_allFolders.sh`
+   - Submit stochastic approach batch scripts to Slurm (full process of 3 scripts for all parameter values in `Parameters.txt` implicitly using `sbatch cluster_scripts/sbatch_run_full.sh`):  `bash clusterdata_scripts/Run_fullJobs_allFolders.sh`
+   - Submit individual stochastic approach batch scripts to Slurm (full process of 3 scripts for each parameter value in `Parameters.txt` implicitly using `sbatch cluster_scripts/sbatch_run_individuals_1.sh`):  `bash clusterdata_scripts/Run_individualsJobs_allFolders.sh`
 
 -To obtain the main statistical measures of the quantifiers results: `julia clusterdata_scripts/ManageClusterData.jl`
 

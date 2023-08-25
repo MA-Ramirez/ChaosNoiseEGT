@@ -4,6 +4,7 @@ Functions used to quantify relevant features of the dynamics.
 -Standard deviation
 -Fixation time
 -LempelZiv complexity measure
+-Fourier spectrum
 """
 
 using DrWatson
@@ -77,15 +78,11 @@ end
 Returns the fourier spectrum of a data set
 `xlim_val`: value of the xlim range
 """
-function fourier_spectrum(data,xlim_val)
+function fourier_spectrum(data)
+    #function fourier_spectrum(data,xlim_vals,ylim_vals,color_val,B)
     F = fft(data[:,1])
     freqs = fftfreq(length(data[:,1]), 1.0/0.01)
-    plot(freqs, abs.(F))
-    #Aesthetics
-    xlim((-0.01,xlim_val))
-    xlabel("Frequency")
-    ylabel("Amplitude")
-    title("Fourier spectrum")
+    return freqs, abs.(F)
 end
 
 ##################################################
@@ -223,4 +220,23 @@ function lempelzivdata_stochastic(data)
     LZ_all[end] = mean_LZ_all
 
     return LZ_all
+end
+
+########################################################
+#  Auxiliary function to graph according to color map  #
+########################################################
+
+"""
+    get_colors(betas) → Vector{NTuple{4, Float64}}
+Given n number of different unique beta values in data, returns an array of n colors
+in (red,blue,green,alpha) format using the color map "inferno"
+"""
+function get_colors(betas)
+    n = size(betas)[1]
+    cmap = cm.get_cmap("inferno")
+    colors = []
+    for i in 0:(1/n):1
+        push!(colors,cmap(i))
+    end
+    return colors
 end
