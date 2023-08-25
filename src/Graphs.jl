@@ -171,6 +171,15 @@ function timeseries(x1,x2,x3,x4; xmin::Int64 = 0, xmax::Int64 = length(x1))
     plt.plot(t,x2, c="b", label = L"x_2")
     plt.plot(t,x3, c="r", label = L"x_3")
     plt.plot(t,x4, c="deepskyblue", label = L"x_4")
+
+    #Code to graph the nearby trajectory
+    """
+    plt.plot(t,x1, c="darkgoldenrod",linestyle="dashed",alpha=0.5)
+    plt.plot(t,x2, c="b",linestyle="dashed",alpha=0.5)
+    plt.plot(t,x3, c="r",linestyle="dashed",alpha=0.5)
+    plt.plot(t,x4, c="deepskyblue",linestyle="dashed",alpha=0.5)
+    """
+
     #Aesthetics
     plt.xlabel("Time steps (t)")
     plt.ylabel(L"x_k")
