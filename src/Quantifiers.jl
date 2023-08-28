@@ -79,9 +79,9 @@ Returns the fourier spectrum of a data set
 `xlim_val`: value of the xlim range
 """
 function fourier_spectrum(data)
-    #function fourier_spectrum(data,xlim_vals,ylim_vals,color_val,B)
-    F = fft(data[:,1])
-    freqs = fftfreq(length(data[:,1]), 1.0/0.01)
+    sampling_rate = 1.0/0.01
+    F = fftshift(fft(data[:,1]))
+    freqs = fftshift(fftfreq(length(data[:,1]), sampling_rate))
     return freqs, abs.(F)
 end
 
