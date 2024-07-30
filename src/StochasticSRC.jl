@@ -176,14 +176,15 @@ all population sizes
 The constant factor is approximated visually, such that the time steps are enough to visualise
 the attractor and for the running time of the quantifiers doesn't explode
 """
-function set_timesteps(populationsize)
-    constant_factor = 0.1
-    tau = Int(populationsize/constant_factor)
-    return tau
-end
 
 function set_timesteps_FD(populationsize)
     constant_factor = 500.0/3.0
+    tau = round(Int, populationsize*constant_factor)
+    return tau
+end
+
+function set_timesteps_others(populationsize)
+    constant_factor = 200.0
     tau = round(Int, populationsize*constant_factor)
     return tau
 end

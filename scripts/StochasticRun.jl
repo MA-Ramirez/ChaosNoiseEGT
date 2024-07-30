@@ -30,10 +30,12 @@ B = parse(Float64,ARGS[1])
 N = parse(Int64,ARGS[2])
 
 #Time steps
-T = set_timesteps(N)
+#T = set_timesteps(N)
+T = set_timesteps_FD(N)
 
 #Initial conditions
-ini_con = set_initial_conditions(N)
+#ini_con = set_initial_conditions(N)
+ini_con = [0.25,0.25,0.25,0.25]
 
 #Dictionary of parameters
 params = @strdict B N

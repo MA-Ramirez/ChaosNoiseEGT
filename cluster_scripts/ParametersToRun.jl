@@ -4,13 +4,12 @@ Script used to determine the parameters for which the stochastic simulations wil
 
 using DelimitedFiles
 
-BN = [0,50.0,75.0,100.0,250.0,500.0,750.0,1000.0]
-N = [100,250,500,1000,2500,5000,10000,25000,50000]
+B = [0.0,5.0,7.0,10.0,15.0,25.0,35.0,50.0,100.0,1000.0]
+N = [100,500,1000,1500,2000,2500,3000]
 
-for i in BN
+for i in B
     for j in N
-        beta = i/j
-        params = Any[beta,j]
+        params = Any[i,j]
         #The parameters are saved in cluster_scripts
         open("cluster_scripts/Parameters.txt", "a") do io
             writedlm(io, adjoint(params), " ")

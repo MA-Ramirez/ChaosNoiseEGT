@@ -50,7 +50,7 @@ colors = get_colors(B)
 
 #Initialise figure
 fig,axs = plt.subplots(sizeB,1,sharex=true,figsize=(6,6))
-fig.suptitle("Fourier spectra")
+fig.suptitle("Fourier power spectra")
 label_container = []
 
 #Generates plot with subplots for all beta values
@@ -74,7 +74,7 @@ for i in 1:sizeB
     end
 
     if i == 4
-        axs[i].set(ylabel="Amplitude")
+        axs[i].set(ylabel="Power spectral density")
     end
 end
 

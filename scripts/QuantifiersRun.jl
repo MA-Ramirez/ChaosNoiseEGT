@@ -259,8 +259,8 @@ function run_quantifiers(approach,namefile)
     ##################################################
     #                 FRACTAL DIMENSION              #
     ##################################################
-    #Les,Lcs = run_fractaldimension(approach,Data)
-    #graph_fractaldimension(approach,namefile,Les,Lcs)
+    Les,Lcs = run_fractaldimension(approach,Data)
+    graph_fractaldimension(approach,namefile,Les,Lcs)
 
     ##################################################
     #                STANDARD DEVIATION              #
@@ -270,18 +270,21 @@ function run_quantifiers(approach,namefile)
      ##################################################
     #                   PERMUTATION ENTROPY           #
     ##################################################
-    #run_permutationentropy(approach,Data)
+    run_permutationentropy(approach,Data)
 
     ##################################################
     #                  FIXATION TIME                 #
     ##################################################
-    #run_fixationtime(approach,Data)
+    run_fixationtime(approach,Data)
 
     ##################################################
     #                   LEMPEL-ZIV                   #
     ##################################################
-    #run_lempelziv(approach,Data)
+    run_lempelziv(approach,Data)
 
 end
 
+t1 = time()
 run_quantifiers(APPROACH,NAMEFILE)
+running_time = time() - t1
+println("Running time quantifiers: ", running_time, " seconds")
