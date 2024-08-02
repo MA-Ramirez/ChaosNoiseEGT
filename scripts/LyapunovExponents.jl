@@ -47,7 +47,7 @@ params = @strdict B
 
 Generate dynamical system using DynamicalSystems package
 """
-ds = ContinuousDynamicalSystem(dynamic_rule_PCP!, ini_con, B)
+ds = ContinuousDynamicalSystem(dynamic_rule_PCP!, ini_con, B, diffeq=(abstol = 1.0e-9,reltol = 1.0e-9))
 
 lyapunov_spectrum = lyapunovspectrum(ds, 100000, 4; Ttr = 100)
 
