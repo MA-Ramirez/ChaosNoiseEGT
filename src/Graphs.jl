@@ -61,8 +61,8 @@ function ternary_plot(x1,x2,x3)
     #Generate plot
     ax.plot(x1,x2,x3,c="g",linewidth=1.0)
 
-    #Initialize grid
-    ax.grid(linestyle="--",linewidth=0.5,alpha=0.5)
+    #Initialize grid (comment for minimalist version)
+    #ax.grid(linestyle="--",linewidth=0.5,alpha=0.5)
 
     #Set labels
     ax.set_tlabel(L"x_1")
@@ -73,6 +73,11 @@ function ternary_plot(x1,x2,x3)
     ax.taxis.set_tick_params(tick2On=true, colors="darkgoldenrod", grid_color="darkgoldenrod")
     ax.laxis.set_tick_params(tick2On=true, colors="b", grid_color="b")
     ax.raxis.set_tick_params(tick2On=true, colors="r", grid_color="r")
+
+    #Set ticks (minimalist)
+    ax.taxis.set_ticks([0.0, 1.0])
+    ax.laxis.set_ticks([0.0, 1.0])
+    ax.raxis.set_ticks([0.0, 1.0])
 
     # Color labels
     ax.taxis.label.set_color("darkgoldenrod")
