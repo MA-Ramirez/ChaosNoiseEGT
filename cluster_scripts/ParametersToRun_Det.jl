@@ -4,32 +4,9 @@ Script used to determine the parameters for which the deterministic quantifiers 
 
 using DelimitedFiles
 
-for i in 0.01:0.01:0.1
+for i in -2:0.1:3
+    ans = round(10^i,digits=3)
     open("cluster_scripts/ParametersDet_Quant.txt", "a") do io
-        writedlm(io, i, " ")
+        writedlm(io, ans, " ")
     end
 end
-
-for i in 0.2:0.1:1.0
-    open("cluster_scripts/ParametersDet_Quant.txt", "a") do io
-        writedlm(io, i, " ")
-    end
-end
-
-for i in 2.0:1.0:10.0
-    open("cluster_scripts/ParametersDet_Quant.txt", "a") do io
-        writedlm(io, i, " ")
-    end
-end   
-
-for i in 20.0:10.0:100.0
-    open("cluster_scripts/ParametersDet_Quant.txt", "a") do io
-        writedlm(io, i, " ")
-    end
-end   
-
-for i in 200.0:100.0:1000.0
-    open("cluster_scripts/ParametersDet_Quant.txt", "a") do io
-        writedlm(io, i, " ")
-    end
-end 

@@ -9,102 +9,93 @@ using CSV, DataFrames, LaTeXStrings, DelimitedFiles, PyPlot
 
 """
     get_data(measure) → DataFrame
-Returns DataFrame with the mean data of the quantifier specified by `measure`
+Sorts the data by beta value
+Returns DataFrame with the quantifier data specified by `measure`
 """
 function get_data(measure)
     data = CSV.read(datadir("Quantifiers/QuantifiersDet", "Det_"*measure*".csv"), DataFrame,header=false)
+    data = sort!(data, [:Column1])
+    println(measure)
+    println(data)
     return data
 end
 
 """
-    graph_cluster_run(measure) → pdf file
-Generates pdf file for specified `measure`
-For each B value, it graphs the corresponding quantifier value
+    graph_cluster_run() → pdf file
+Generates pdf file for all measures
+For each B value, it graphs the corresponding quantifier value in a unified plot
 """
-function graph_det_cluster_run(measure)
-
-    #Get and define data avg runs
-    Data = get_data(measure)
-
+function graph_det_cluster_run()
 
     #General Aesthetics
+    labels_1 = [L"\lambda_1", L"\lambda_2", L"\lambda_3", L"\lambda_4"]
+    labels_2 = [L"x_1", L"x_2", L"x_3", L"x_4"]
+    markers = ["o", "^", "s", "d"]
+    
+    #Define subplots
+    fig, axs = subplots(5, sharex=true, figsize= (6,10))
+
+    #Common x axis
     xscale("log")
     xlabel("Selection intensity coefficient ("*L"\beta"*")")
-    #plt.xticks([10^2,10^3,10^4,10^5,10^7],[L"10^2",L"10^3",L"10^4",L"10^5","Deterministic"])
 
-    #ylabel
-    if measure == "FD"
-        Data = sort!(Data, [:Column1])
-        println(measure)
-        println(Data)
-        B_values = Data[:,1]
-        variable_values = Data[:,end]
-        scatter(B_values, variable_values)
-        plot(B_values, variable_values)
-        ylabel("Fractal dimension ("*L"\Delta^{C}"*")")
-    elseif measure == "FixT"
-        sort!(Data, [:Column1])
-        println(measure)
-        println(Data)
-        B_values = Data[:,1]
-        variable_values = Data[:,end]
-        scatter(B_values, variable_values)
-        plot(B_values, variable_values)
-        ylabel("Fixation time ("*L"\tau"*")")
-    elseif measure == "LZ"
-        sort!(Data, [:Column1])
-        println(measure)
-        println(Data)
-        B_values = Data[:,1]
-        variable_values = Data[:,end]
-        scatter(B_values, variable_values)
-        plot(B_values, variable_values)
-        ylabel("Lempel-Ziv complexity ("*L"C_{LZ}"*")")
-    elseif measure == "PE"
-        sort!(Data, [:Column1])
-        println(measure)
-        println(Data)
-        B_values = Data[:,1]
-        variable_values = Data[:,end]
-        scatter(B_values, variable_values)
-        plot(B_values, variable_values)
-        ylabel("Permutation entropy ("*L"H"*")")
-    elseif measure == "Std"
-        sort!(Data, [:Column1])
-        println(measure)
-        println(Data)
-        B_values = Data[:,1]
-        for i in 2:5
-            scatter(B_values, Data[:,i], label = string(i))
-            plot(B_values, Data[:,i], label = string(i))
-        end
-        legend(loc=4)
-        ylabel("Standard deviation ("*L"\sigma"*")")
-    elseif measure == "LE"
-        Data = sort!(Data, [:Column1])
-        println(measure)
-        println(Data)
-        yscale("symlog")
-        B_values = Data[:,1]
-        for i in 2:5
-            scatter(B_values, Data[:,i], label = string(i))
-            plot(B_values, Data[:,i], label = string(i))
-        end
-        legend(loc=4)
-        ylabel("Lyapunov exponents ("*L"\lambda)")
-        #ylim((-0.1,0.025))
-        #hline()
+    #---------------LYAPUNOV SPECTRUM--------------
+    Data = get_data("LE")
+    B_values = Data[:,1]
+    variable_values = Data[:,2]
+
+    #Maximum Lyapunov exponents
+    cm = get_cmap(:viridis)
+    axs[1].plot(B_values, variable_values, marker="o", markersize=3, c=cm(0/4))
+    axs[1].locator_params(axis="y", nbins=3)
+    axs[1].set_ylabel("Maximum Lyapunov exponent", fontsize="x-small")
+    #axs[1].legend(loc=2)
+    #axs[1].set_title("Quantifiers deterministic system")
+
+    #Lyapunov spectrum
+    for i in 2:5
+        axs[2].plot(B_values, Data[:,i], marker=markers[i-1], markersize=3, c=cm((i-2)/4))
     end
+    axs[2].set_ylabel("Lyapunov exponents", fontsize="x-small")
+    #axs[2].legend(loc=3, fontsize="small")
+    #axs[2].set_yscale("symlog")
+    axs[2].set_ylim((-10,5))
+
+    #---------------FRACTAL DIMENSION--------------
+    Data = get_data("FD")
+    B_values = Data[:,1]
+    variable_values = Data[:,end]
+    axs[3].plot(B_values, variable_values, marker="o", c="crimson", markersize=3 )
+    #axs[3].axhline(y=2, c="darkgrey", linewidth=1)
+    #axs[3].axhline(y=1, c="darkgrey", linewidth=1)
+    axs[3].locator_params(axis="y", nbins=3)
+    axs[3].set_ylabel("Fractal dimension", fontsize="x-small")
+    axs[3].set_ylim((0.9,2.1))
+
+    #---------------LEMPELZ-ZIV--------------
+    Data = get_data("LZ")
+    B_values = Data[:,1]
+    variable_values = Data[:,end]
+    axs[4].plot(B_values, variable_values, marker="o", c="chocolate", markersize=3 )
+    axs[4].locator_params(axis="y", nbins=3)
+    axs[4].set_ylabel("Lempel-Ziv complexity", fontsize="x-small")
+    axs[4].set_ylim((630,720))
+
+    #---------------STANDARD DEVIATION--------------
+    Data = get_data("Std")
+    B_values = Data[:,1]
+    variable_values = Data[:,end]
+    axs[5].plot(B_values, variable_values, marker="o", c="salmon", markersize=3 )
+    axs[5].locator_params(axis="y", nbins=3)
+    axs[5].set_ylabel("Standard deviation", fontsize="x-small")
+    axs[5].set_ylim((0,0.15))
 
     #Output
-    tight_layout()
-    savefig(plotsdir("GeneralQuantifiers/","General_Det_"*measure*".png"))
+    savefig(plotsdir("GeneralQuantifiers/","General_Det_Unified.pdf"))
     clf()
 end
 
 #Measures = ["FD", "FixT", "LE", "LZ", "PE", "Std"]
-Measures = ["LE"]
 
-for i in Measures
-    graph_det_cluster_run(i)
-end
+#get_data("Std")
+graph_det_cluster_run()
