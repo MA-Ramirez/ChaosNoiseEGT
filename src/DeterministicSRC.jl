@@ -6,6 +6,10 @@ using DrWatson
 
 include(srcdir("PayoffMatrix.jl"))
 
+#-----------------------------------------
+#------Pairwise Comparison Process--------
+#-----------------------------------------
+
 @inline @inbounds function dynamic_rule_PCP!(du, u, p, t)
     """
         dynamic_rule_PCP!(du, u, p, t)
@@ -88,4 +92,39 @@ function generate_trajectory(ds, Beta)
     dt = 0.1/Beta
     data, t = trajectory(ds, total_time; Δt = dt)
     return data, t
+end
+
+#-----------------------------------------
+#----------Replicator equation------------
+#-----------------------------------------
+
+@inline @inbounds function replicator_equation!(du, u, p, t)
+    #Input parameter - Selection intensity coefficient
+    #B = p[1];
+
+    #Number of equations = dimension payoff matrix
+    n = size(payoff_matrix)[1]
+
+    #Define vector of variables
+    X = []
+    for i in 1:n
+        push!(X,u[i])
+    end
+
+    #Define fitness values
+    f = []
+    for i in 1:n
+        push!(f,(payoff_matrix*X)[i])
+    end
+
+    #Average fitness
+    avg_fitness = transpose(X)*payoff_matrix*X
+
+    #ODE system
+    for i in 1:n
+        du[i] = X[i]*(f[i] - avg_fitness)
+    end
+
+    #Output
+    return
 end

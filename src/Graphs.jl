@@ -175,7 +175,7 @@ function timeseries(x1,x2,x3,x4; xmin::Int64 = 0, xmax::Int64 = length(x1))
     plt.plot(t,x1, c="darkgoldenrod", label = L"x_1")
     plt.plot(t,x2, c="b", label = L"x_2")
     plt.plot(t,x3, c="r", label = L"x_3")
-    plt.plot(t,x4, c="deepskyblue", label = L"x_4")
+    plt.plot(t,x4, c="indigo", label = L"x_4")
 
     #Code to graph the nearby trajectory
     """
@@ -187,10 +187,13 @@ function timeseries(x1,x2,x3,x4; xmin::Int64 = 0, xmax::Int64 = length(x1))
 
     #Aesthetics
     plt.xlabel("Time steps (t)")
-    plt.ylabel(L"x_k")
-    plt.legend(loc="center left", bbox_to_anchor=(1, 0.5))
+    plt.ylabel("Frequencies "*L"(x_k)")
+    #plt.legend(loc="center left", bbox_to_anchor=(1, 0.5))
     #keyword argument modifies
     plt.xlim((xmin,xmax))
+    plt.ylim((-0.03,0.8))
+    plt.locator_params(axis="y", nbins=5)
+    plt.locator_params(axis="x", nbins=4)
 
     plt.tight_layout()
 end
