@@ -135,34 +135,27 @@ It runs the pairwise comparison process step for `time_steps` amount of times.
 It returns an array of arrays with the data of the evolution of the process
 """
 function run_full_simulation(initial_condition, Beta, populationsize, time_steps)
-    data_process = []
+    data_process = Array{Float64}(undef,time_steps,4)
 
     #Initialise first entry with initial conditions
-    push!(data_process,initial_condition)
+    data_process[1,:] = initial_condition
 
+    cut = time_steps
     for i in 2:time_steps
-        #Deep copy to copy by value not by reference
-        prev_step_data = deepcopy(data_process[end])
-        step_data = step(prev_step_data,Beta,populationsize)
+        #Current step only depends on previous step
+        step_data = step(data_process[i-1,:], Beta, populationsize)
 
         #If any type reaches the boundary, stop the process
         if reach_boundary(step_data,populationsize) == true
-            push!(data_process,step_data)
-            break
+            data_process[i,:] = step_data
+            cut = i
+            @goto escape_label
         end
-        push!(data_process,step_data)
+        data_process[i,:] = step_data
     end
-    return data_process
-end
-
-"""
-    full_simulation(initial_amounts, Beta, populationsize, time_steps) → Matrix{Float64}
-Returns the results of `run_full_simulation` for easier data handling in the notebook
-"""
-function full_simulation(initial_condition, Beta, populationsize, time_steps)
-    data_vectors = run_full_simulation(initial_condition, Beta, populationsize, time_steps)
-    data_matrix = reduce(vcat,transpose.(data_vectors))
-    return data_matrix
+    #Break label
+    @label escape_label
+    return data_process[1:cut,:]
 end
 
 ################################################################################
@@ -183,8 +176,24 @@ function set_timesteps_FD(populationsize)
     return tau
 end
 
-function set_timesteps_others(populationsize)
-    constant_factor = 200.0
-    tau = round(Int, populationsize*constant_factor)
-    return tau
+function set_timesteps_others(populationsize, beta)
+    if beta == 0
+        #Rescale according to population size
+        constant_factor = 1000.0
+        ans2 = round(Int, populationsize*constant_factor)
+    else
+        #Rescale according to population size
+        constant_factor = 1000.0
+        ans1 = round(Int, populationsize*constant_factor)
+        #Rescale according to beta
+        if beta >= 1000
+            #Limit for rescaling
+            # if beta is very large, it has same timesteps as beta=100
+            # for num timesteps to not be too small
+            beta = 100
+        end
+        beta_factor = beta/5.0
+        ans2 = round(Int, ans1/beta_factor)
+    end
+    return ans2
 end
