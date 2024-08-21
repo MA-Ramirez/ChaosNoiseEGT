@@ -4,14 +4,18 @@ Script used to determine the parameters for which the stochastic simulations wil
 
 using DelimitedFiles
 
-B = [0.0,5.0,7.0,10.0,15.0,25.0,35.0,50.0,100.0,1000.0]
-N = [100,500,1000,1500,2000,2500,3000]
+#General quantifiers
+N = [100, 500, 1000, 5000, 10000, 50000, 100000]
+#Fractal dimension
+#N = [100, 500, 1000, 1500, 2000, 2500, 3000]
 
-for i in B
+for i in 0.7:0.1:2.9
     for j in N
-        params = Any[i,j]
+        B = round(10^i)
+        params = Any[B,j]
         #The parameters are saved in cluster_scripts
-        open("cluster_scripts/Parameters.txt", "a") do io
+        open("cluster_scripts/Parameters_Blog.txt", "a") do io
+        #open("cluster_scripts/Parameters_FD.txt", "a") do io
             writedlm(io, adjoint(params), " ")
         end
     end
