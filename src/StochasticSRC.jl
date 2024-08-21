@@ -163,20 +163,32 @@ end
 ################################################################################
 
 """
-    set_timesteps(populationsize) → Int64
+    set_timesteps_FD(populationsize) → Int64
 It sets the amount of time steps, such that the number of generations is fixed for
 all population sizes
-The constant factor is approximated visually, such that the time steps are enough to visualise
+The constant factor is approximated, such that the time steps are enough to visualise
 the attractor and for the running time of the quantifiers doesn't explode
 """
-
 function set_timesteps_FD(populationsize)
     constant_factor = 500.0/3.0
     tau = round(Int, populationsize*constant_factor)
     return tau
 end
 
+"""
+    set_timesteps_others(populationsize, beta) → Int64
+It sets the amount of time steps, such that the number of generations is fixed for
+all population sizes
+The constant factor is approximated, such that the time steps are enough to visualise
+the attractor and for the running time of the quantifiers doesn't explode
+    Outlier cases B=0 or B>=1000 
+"""
 function set_timesteps_others(populationsize, beta)
+    if typeof(populationsize) == String
+        populationsize = parse(Int64, populationsize)
+        beta = parse(Float64, beta)
+    end
+
     if beta == 0
         #Rescale according to population size
         constant_factor = 1000.0

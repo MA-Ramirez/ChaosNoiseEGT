@@ -12,6 +12,8 @@ using DynamicalSystems
 using Statistics
 using FFTW
 
+include(srcdir("StochasticSRC.jl"))
+
 ##################################################
 #                 FRACTAL DIMENSION              #
 ##################################################
@@ -106,12 +108,16 @@ end
 #                  FIXATION TIME                 #
 ##################################################
 """
-    fixation_time(data) → Int64
-Returns the amount of time steps for of the evolution of the trajectory.
-i.e. length of the vector corresponding to each variable
+    fixation_time(data,populationsize, beta) → Float64
+Returns the normalised fixation time
+i.e. length of trajectory / total available time steps
 """
-function fixation_time(data)
-    fix_time = size(data)[1]
+function fixation_time(data, populationsize, beta)
+    total_steps = set_timesteps_others(populationsize, beta)
+    trajectory_steps = size(data)[1]
+
+    fix_time = trajectory_steps/total_steps
+
     return fix_time
 end
 

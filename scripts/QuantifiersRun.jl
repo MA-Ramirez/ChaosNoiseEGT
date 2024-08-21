@@ -194,7 +194,7 @@ end
 Run and save the fixation time of the data
 """
 function run_fixationtime(approach,data)
-    fixT = [Float64(fixation_time(data))]
+    fixT = [Float64(fixation_time(data, N, B))]
 
     if approach == "Deterministic"
         #Full info to be saved

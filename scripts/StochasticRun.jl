@@ -29,9 +29,9 @@ B = parse(Float64,ARGS[1])
 #Population size
 N = parse(Int64,ARGS[2])
 
-#Time steps
-#T = set_timesteps(N)
-T = set_timesteps_FD(N)
+#TIME STEPS
+#T = set_timesteps_FD(N)
+T = set_timesteps_others(N, B)
 
 #Initial conditions
 #ini_con = set_initial_conditions(N)
