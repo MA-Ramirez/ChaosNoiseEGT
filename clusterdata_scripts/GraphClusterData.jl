@@ -36,15 +36,6 @@ function get_errbar_data(measure)
     return data
 end
 
-"""
-    get_deterministic_data(measure) → DataFrame
-Returns DataFrame with the deterministic data of the quantifier specified by `measure`
-"""
-function get_deterministic_data(measure)
-    data = CSV.read(datadir("Quantifiers/QuantifiersDet", "Det_"*measure*".csv"), DataFrame,header=false)
-    return data
-end
-
 ################################################################################
 #                                    Process data                              #
 ################################################################################
@@ -60,12 +51,12 @@ function find_unique_values(array)
 end
 
 ################################################################################
-#                                  Graph functions                             #
+#                                    Aesthetics                                #
 ################################################################################
 
 """
     get_colors(betas) → Vector{NTuple{4, Float64}}
-Given n number of different unique beta values in data, returns an array of n colors
+Given n number of unique values in data, returns an array of n colors
 in (red,blue,green,alpha) format using the color map "inferno"
 """
 function get_colors(betas)
@@ -78,18 +69,22 @@ function get_colors(betas)
     return colors
 end
 
-"""
-    graph_cluster_run(measure) → pdf file
-Generates pdf file for specified `measure`
-For each unique BN value in the stochatic simulation runs, it graphs the
-average of the quantifier for all the runs, along with the errorbar
-It also graphs the deterministic quantifier for each B value
-"""
-function graph_cluster_run(measure)
+################################################################################
+#                                  Graph functions                             #
+################################################################################
 
+"""
+    graph_individual(measure, axs, loc) → pdf file
+Plots graph for the specified `measure`
+    `axs`: axis for subplots
+    `loc`: location in the axis
+For each unique N value in the stochatic simulation runs, it graphs the
+average of the quantifier for all the runs (along with the errorbar)
+"""
+function graph_individual(measure, axs, loc)
     #Get and define data avg runs
     Data = get_avg_data(measure)
-    BN_values = Data[:,1]
+    B_values = Data[:,1]
     N_values = Data[:,2]
     variable_values = Data[:,end]
 
@@ -97,56 +92,58 @@ function graph_cluster_run(measure)
     Data_errbar = get_errbar_data(measure)
     err_values = Data_errbar[:,end]
 
-    #Get and define data deterministic
-    Det_data = get_deterministic_data(measure)
-    det_beta_values = Det_data[:,1]
-    det_vals = Det_data[:,end]
-
     #Get unique values of data run
-    BN = sort(find_unique_values(Data[:,1]))
+    N = sort(find_unique_values(Data[:,2]))
 
     #Get colors for each plot
-    colors = get_colors(BN)
+    colors = get_colors(N)
 
     #--------PLOT STOCHASTIC------
-    #Label BN
-    plt.plot([],[],color="white", label=L"\beta N")
-    #Generate plots for each unique BN
-    sizeB = size(BN)[1]
-    for i in 1:sizeB
-        BNs = reverse(BN)
-        indexarray = findall( b -> b == BNs[i], BN_values)
+    #Generate plots for each unique B
+    sizeN = size(N)[1]
+    for i in 1:sizeN
+        Ns = reverse(N)
+        indexarray = findall( b -> b == Ns[i], N_values)
 
-        plt.scatter(N_values[indexarray],variable_values[indexarray],label=string(BNs[i]),color=colors[i])
-        plt.plot(N_values[indexarray],variable_values[indexarray],color=colors[i])
-        plt.errorbar(N_values[indexarray],variable_values[indexarray],yerr=err_values[indexarray],color=colors[i])
-        plt.fill_between(N_values[indexarray],variable_values[indexarray]-err_values[indexarray],variable_values[indexarray]+err_values[indexarray],color=colors[i],alpha=0.1)
+        axs[loc].plot(B_values[indexarray],variable_values[indexarray],label=string(Ns[i]),color=colors[i], marker="o")
+        #plt.errorbar(B_values[indexarray],variable_values[indexarray],yerr=err_values[indexarray],color=colors[i])
+        #plt.fill_between(B_values[indexarray],variable_values[indexarray]-err_values[indexarray],variable_values[indexarray]+err_values[indexarray],color=colors[i],alpha=0.1)
     end
+end
 
-    #--------PLOT DETERMINISTIC------
-    #Label B
-    plt.plot([],[],color="white", label=L"\beta")
-    #Generate plots for each unique beta
-    for i in 1:sizeB-1
-        indexarrayDET = findall( b -> b == reverse(det_beta_values)[i], det_beta_values)
-        plt.scatter(10^7,det_vals[indexarrayDET],label=string(reverse(det_beta_values)[i]),color=colors[i],marker="^")
-    end 
 
-    #General Aesthetics
+
+"""
+    graph_cluster_run(measure) → pdf file
+Generates pdf file for specified `measure`
+It specifies the aesthetics of the plot and saves it
+TODO: improve code if individual plots of quantifiers are needed
+"""
+function graph_cluster_run(measure)
+
+    #Define (sub)plots
+    fig, axs = plt.subplots(2, sharex=true, figsize= (6,10))
+
+    #Plot it
+    graph_individual(measure, axs, 1)
+
+    #Common x axis
     plt.xscale("log")
-    plt.xlabel("Population size (N)")
-    plt.legend(loc="center left", bbox_to_anchor=(1, 0.5), ncol=2)
-    plt.xticks([10^2,10^3,10^4,10^5,10^7],[L"10^2",L"10^3",L"10^4",L"10^5","Deterministic"])
+    plt.xlabel("Selection intensity coefficient ("*L"\beta"*")")
+    plt.legend(loc="center left", bbox_to_anchor=(1, 0.5))
 
     #ylabel
     if measure == "FD"
         plt.ylabel("Fractal dimension ("*L"\Delta^{C}"*")")
     elseif measure == "FixT"
-        plt.ylabel("Fixation time ("*L"\tau"*")")
+        plt.ylabel("Normalised fixation time ("*L"\tau"*")")
+        plt.locator_params(axis="y", nbins=3)
     elseif measure == "LZ"
         plt.ylabel("Lempel-Ziv complexity ("*L"C_{LZ}"*")")
     elseif measure == "Std"
         plt.ylabel("Standard deviation ("*L"\sigma"*")")
+        plt.locator_params(axis="y", nbins=4)
+        plt.ylim((0,0.15))
     elseif measure == "PE"
         plt.ylabel("Permutation entropy ("*L"H"*")")
     end
@@ -157,10 +154,66 @@ function graph_cluster_run(measure)
     plt.clf()
 end
 
-################################################################################
+######################################
+#               RUN IT               #
+######################################
 
-Measures = ["FD","Std","PE"]
+Measures = ["Std","PE","LZ","FixT"]
+
 
 for i in Measures
     graph_cluster_run(i)
 end
+
+
+################################################################################
+
+
+"""
+    graph_full_cluster() → pdf file
+Generates pdf file for all measures
+For each N value, it graphs the corresponding quantifier value in a unified plot (Quantifier vs B)
+    It graphs the average of the quantifier for all the runs (along with the errorbar)
+It specifies the aesthetics of the plot and saves it
+"""
+function graph_full_cluster()
+
+    #Define subplots
+    fig, axs = plt.subplots(3, sharex=true, figsize= (6,10))
+
+    #Common x axis
+    plt.xscale("log")
+    plt.xlabel("Selection intensity coefficient ("*L"\beta"*")")
+    plt.xlim((2, 1100))
+
+    #---------------FRACTAL DIMENSION--------------
+    graph_individual("FD", axs, 1)
+    axs[1].set_ylabel("Fractal dimension ("*L"\Delta^{C}"*")")
+    axs[1].locator_params(axis="y", nbins=3)
+    axs[1].set_ylim((0.9, 3.1))
+    axs[1].set_yticks([1,2,3],["1.0", "2.0", "3.0"])
+
+    #---------------FIXATION TIME--------------
+    graph_individual("FixT", axs, 2)
+    axs[2].set_ylabel("Normalised fixation time ("*L"\tau"*")")
+    axs[2].locator_params(axis="y", nbins=3)
+    axs[2].set_ylim((-0.1, 1.2))
+    axs[2].set_yticks([0,0.5,1.0],["0.0", "0.5", "1.0"])
+
+    #---------------STANDARD DEVIATION--------------
+    graph_individual("Std", axs, 3)
+    axs[3].set_ylabel("Standard deviation ("*L"\sigma"*")")
+    axs[3].locator_params(axis="y", nbins=4)
+    axs[3].set_ylim((0,0.15))
+
+    #Output
+    plt.tight_layout()
+    plt.savefig(plotsdir("GeneralQuantifiers/","General_Sto_Unified.pdf"))
+    plt.clf()
+end
+
+######################################
+#               RUN IT               #
+######################################
+
+graph_full_cluster()

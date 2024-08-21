@@ -7,6 +7,10 @@ using DrWatson
 
 using CSV, DataFrames, LaTeXStrings, DelimitedFiles, PyPlot
 
+################################################################################
+#                                      Get data                                #
+################################################################################
+
 """
     get_data(measure) → DataFrame
 Sorts the data by beta value
@@ -20,10 +24,14 @@ function get_data(measure)
     return data
 end
 
+################################################################################
+#                                  Graph functions                             #
+################################################################################
+
 """
-    graph_cluster_run() → pdf file
+    graph_det_cluster_run() → pdf file
 Generates pdf file for all measures
-For each B value, it graphs the corresponding quantifier value in a unified plot
+For each N value, it graphs the corresponding quantifier value in a unified plot (Quantifier vs B)
 """
 function graph_det_cluster_run()
 
@@ -57,45 +65,45 @@ function graph_det_cluster_run()
         axs[2].plot(B_values, Data[:,i], marker=markers[i-1], markersize=3, c=cm((i-2)/4))
     end
     axs[2].set_ylabel("Lyapunov exponents", fontsize="x-small")
+    axs[2].set_ylim((-10,5))
     #axs[2].legend(loc=3, fontsize="small")
     #axs[2].set_yscale("symlog")
-    axs[2].set_ylim((-10,5))
-
-    #---------------FRACTAL DIMENSION--------------
-    Data = get_data("FD")
-    B_values = Data[:,1]
-    variable_values = Data[:,end]
-    axs[3].plot(B_values, variable_values, marker="o", c="crimson", markersize=3 )
-    #axs[3].axhline(y=2, c="darkgrey", linewidth=1)
-    #axs[3].axhline(y=1, c="darkgrey", linewidth=1)
-    axs[3].locator_params(axis="y", nbins=3)
-    axs[3].set_ylabel("Fractal dimension", fontsize="x-small")
-    axs[3].set_ylim((0.9,2.1))
 
     #---------------LEMPELZ-ZIV--------------
     Data = get_data("LZ")
     B_values = Data[:,1]
     variable_values = Data[:,end]
-    axs[4].plot(B_values, variable_values, marker="o", c="chocolate", markersize=3 )
+    axs[3].plot(B_values, variable_values, marker="o", c="yellowgreen", markersize=3 )
+    axs[3].locator_params(axis="y", nbins=3)
+    axs[3].set_ylabel("Lempel-Ziv complexity", fontsize="x-small")
+    axs[3].set_ylim((630,720))
+
+    #---------------FRACTAL DIMENSION--------------
+    Data = get_data("FD")
+    B_values = Data[:,1]
+    variable_values = Data[:,end]
+    axs[4].plot(B_values, variable_values, marker="o", c="turquoise", markersize=3 )
     axs[4].locator_params(axis="y", nbins=3)
-    axs[4].set_ylabel("Lempel-Ziv complexity", fontsize="x-small")
-    axs[4].set_ylim((630,720))
+    axs[4].set_ylabel("Fractal dimension", fontsize="x-small")
+    axs[4].set_ylim((0.9,2.1))
 
     #---------------STANDARD DEVIATION--------------
     Data = get_data("Std")
     B_values = Data[:,1]
     variable_values = Data[:,end]
-    axs[5].plot(B_values, variable_values, marker="o", c="salmon", markersize=3 )
+    axs[5].plot(B_values, variable_values, marker="o", c="deepskyblue", markersize=3 )
     axs[5].locator_params(axis="y", nbins=3)
     axs[5].set_ylabel("Standard deviation", fontsize="x-small")
     axs[5].set_ylim((0,0.15))
 
     #Output
+    tight_layout()
     savefig(plotsdir("GeneralQuantifiers/","General_Det_Unified.pdf"))
     clf()
 end
 
-#Measures = ["FD", "FixT", "LE", "LZ", "PE", "Std"]
+######################################
+#               RUN IT               #
+######################################
 
-#get_data("Std")
 graph_det_cluster_run()
