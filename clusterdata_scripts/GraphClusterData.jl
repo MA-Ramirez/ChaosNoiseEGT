@@ -186,25 +186,25 @@ function graph_full_cluster()
     plt.xlabel("Selection intensity coefficient ("*L"\beta"*")")
     plt.xlim((2, 1100))
 
-    #---------------FRACTAL DIMENSION--------------
-    graph_individual("FD", axs, 1)
-    axs[1].set_ylabel("Fractal dimension ("*L"\Delta^{C}"*")")
-    axs[1].locator_params(axis="y", nbins=3)
-    axs[1].set_ylim((0.9, 3.1))
-    axs[1].set_yticks([1,2,3],["1.0", "2.0", "3.0"])
-
     #---------------FIXATION TIME--------------
-    graph_individual("FixT", axs, 2)
-    axs[2].set_ylabel("Normalised fixation time ("*L"\tau"*")")
-    axs[2].locator_params(axis="y", nbins=3)
-    axs[2].set_ylim((-0.1, 1.2))
-    axs[2].set_yticks([0,0.5,1.0],["0.0", "0.5", "1.0"])
+    graph_individual("FixT", axs, 1)
+    axs[1].set_ylabel("Normalised fixation time ("*L"\tau"*")")
+    axs[1].locator_params(axis="y", nbins=3)
+    axs[1].set_ylim((-0.1, 1.2))
+    axs[1].set_yticks([0,0.5,1.0],["0.0", "0.5", "1.0"])
 
     #---------------STANDARD DEVIATION--------------
-    graph_individual("Std", axs, 3)
-    axs[3].set_ylabel("Standard deviation ("*L"\sigma"*")")
-    axs[3].locator_params(axis="y", nbins=4)
-    axs[3].set_ylim((0,0.15))
+    graph_individual("Std", axs, 2)
+    axs[2].set_ylabel("Standard deviation ("*L"\sigma"*")")
+    axs[2].locator_params(axis="y", nbins=4)
+    axs[2].set_ylim((0,0.15))
+
+    #---------------FRACTAL DIMENSION--------------
+    graph_individual("FD", axs, 3)
+    axs[3].set_ylabel("Fractal dimension ("*L"\Delta^{C}"*")")
+    axs[3].locator_params(axis="y", nbins=3)
+    axs[3].set_ylim((0.9, 3.1))
+    axs[3].set_yticks([1,2,3],["1.0", "2.0", "3.0"])
 
     #Output
     plt.tight_layout()
