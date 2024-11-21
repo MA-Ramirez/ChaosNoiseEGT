@@ -109,7 +109,6 @@ function run_fractaldimension(approach,data)
     #Graphs plot for fractal dimension calculation
     #graph_fractaldimension(approach,namefile,Les,Lcs)
 
-    """
     if approach == "Deterministic"
         #Full info to be saved
         params = [parse(Float64,B)]
@@ -127,8 +126,6 @@ function run_fractaldimension(approach,data)
             writedlm(io, info_FD,",")
         end
     end
-    """
-    println(FD)
 
     return Les, Lcs
 end
@@ -270,22 +267,22 @@ function run_quantifiers(approach,namefile)
     ##################################################
     #                STANDARD DEVIATION              #
     ##################################################
-    #run_standarddeviation(approach,Data)
+    run_standarddeviation(approach,Data)
 
      ##################################################
     #                   PERMUTATION ENTROPY           #
     ##################################################
-    #run_permutationentropy(approach,Data)
+    run_permutationentropy(approach,Data)
 
     ##################################################
     #                  FIXATION TIME                 #
     ##################################################
-    #run_fixationtime(approach,Data)
+    run_fixationtime(approach,Data)
 
     ##################################################
     #                   LEMPEL-ZIV                   #
     ##################################################
-    #run_lempelziv(approach,Data)
+    run_lempelziv(approach,Data)
 
 end
 

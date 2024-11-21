@@ -149,10 +149,12 @@ function ternary_plot_depth(x1,x2,x3,x4)
 
     # Color bar 
     cax = ax.inset_axes([1.05, 0.1, 0.05, 0.9], transform=ax.transAxes)
-    colorbar = plt.colorbar(scatterplot, cax=cax)
+    colorbar = plt.colorbar(scatterplot, cax=cax, ticks=[0.0, 0.2, 0.4, 0.6, 0.8])
     colorbar.set_label(L"x_4",rotation=270, va="baseline")
+    colorbar.ax.set_ylim(0, 0.8)
 
     plt.tight_layout()
+    #savefig("4D.pdf")
 end
 
 ##################################################
