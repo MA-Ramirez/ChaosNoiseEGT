@@ -78,6 +78,8 @@ function graph_fractaldimension(approach,namefile,Les,Lcs)
     plt.scatter(Les,Lcs)
     plt.xlabel(L"log_{10}(\varepsilon)")
     plt.ylabel(L"log_{10}(C)")
+    plt.locator_params(axis="x", nbins=6)
+    plt.xlim((-5,0))
     #Save settings
     if approach == "Deterministic"
         #CREATE FIRST THE SUBFOLDER "Deterministic/FractalDimDet" IN THE "Plots" FOLDER
@@ -107,6 +109,7 @@ function run_fractaldimension(approach,data)
     #Graphs plot for fractal dimension calculation
     #graph_fractaldimension(approach,namefile,Les,Lcs)
 
+    """
     if approach == "Deterministic"
         #Full info to be saved
         params = [parse(Float64,B)]
@@ -124,6 +127,8 @@ function run_fractaldimension(approach,data)
             writedlm(io, info_FD,",")
         end
     end
+    """
+    println(FD)
 
     return Les, Lcs
 end
@@ -265,22 +270,22 @@ function run_quantifiers(approach,namefile)
     ##################################################
     #                STANDARD DEVIATION              #
     ##################################################
-    run_standarddeviation(approach,Data)
+    #run_standarddeviation(approach,Data)
 
      ##################################################
     #                   PERMUTATION ENTROPY           #
     ##################################################
-    run_permutationentropy(approach,Data)
+    #run_permutationentropy(approach,Data)
 
     ##################################################
     #                  FIXATION TIME                 #
     ##################################################
-    run_fixationtime(approach,Data)
+    #run_fixationtime(approach,Data)
 
     ##################################################
     #                   LEMPEL-ZIV                   #
     ##################################################
-    run_lempelziv(approach,Data)
+    #run_lempelziv(approach,Data)
 
 end
 

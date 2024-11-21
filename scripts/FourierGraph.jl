@@ -50,7 +50,7 @@ colors = get_colors(B)
 
 #Initialise figure
 fig,axs = plt.subplots(sizeB,1,sharex=true,figsize=(6,6))
-fig.suptitle("Fourier power spectra")
+#fig.suptitle("Fourier power spectra")
 label_container = []
 
 #Generates plot with subplots for all beta values
@@ -80,7 +80,8 @@ end
 
 #Aesthetics
 plt.xlabel("Frequency")
-fig.legend(label_container, labels=labels,bbox_to_anchor=(0.95, 0.92),title=L"\beta",fontsize="small", framealpha = 1.0)
+plt.locator_params(axis="x", nbins=5)
+#fig.legend(label_container, labels=labels,bbox_to_anchor=(0.95, 0.92),title=L"\beta",fontsize="small", framealpha = 1.0)
 plt.tight_layout()
 
 #Save figure
