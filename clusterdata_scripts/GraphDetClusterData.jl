@@ -56,7 +56,7 @@ function graph_det_cluster_run()
     cm = get_cmap(:viridis)
     axs[1].plot(B_values, variable_values, marker="o", markersize=3, c=cm(0/4))
     axs[1].locator_params(axis="y", nbins=3)
-    axs[1].set_ylabel("Maximum Lyapunov exponent", fontsize="x-small")
+    axs[1].set_ylabel("Max. Lyapunov exponent")
     #axs[1].legend(loc=2)
     #axs[1].set_title("Quantifiers deterministic system")
 
@@ -64,7 +64,7 @@ function graph_det_cluster_run()
     for i in 2:5
         axs[2].plot(B_values, Data[:,i], marker=markers[i-1], markersize=3, c=cm((i-2)/4))
     end
-    axs[2].set_ylabel("Lyapunov exponents", fontsize="x-small")
+    axs[2].set_ylabel("Lyapunov exponents")
     axs[2].set_ylim((-10,5))
     #axs[2].legend(loc=3, fontsize="small")
     #axs[2].set_yscale("symlog")
@@ -75,7 +75,7 @@ function graph_det_cluster_run()
     variable_values = Data[:,end]
     axs[3].plot(B_values, variable_values, marker="o", c="yellowgreen", markersize=3 )
     axs[3].locator_params(axis="y", nbins=3)
-    axs[3].set_ylabel("Lempel-Ziv complexity", fontsize="x-small")
+    axs[3].set_ylabel("Lempel-Ziv complexity")
     axs[3].set_ylim((630,720))
 
     #---------------FRACTAL DIMENSION--------------
@@ -84,7 +84,7 @@ function graph_det_cluster_run()
     variable_values = Data[:,end]
     axs[4].plot(B_values, variable_values, marker="o", c="turquoise", markersize=3 )
     axs[4].locator_params(axis="y", nbins=3)
-    axs[4].set_ylabel("Fractal dimension", fontsize="x-small")
+    axs[4].set_ylabel("Fractal dimension")
     axs[4].set_ylim((0.9,2.1))
 
     #---------------STANDARD DEVIATION--------------
@@ -93,7 +93,7 @@ function graph_det_cluster_run()
     variable_values = Data[:,end]
     axs[5].plot(B_values, variable_values, marker="o", c="deepskyblue", markersize=3 )
     axs[5].locator_params(axis="y", nbins=3)
-    axs[5].set_ylabel("Standard deviation", fontsize="x-small")
+    axs[5].set_ylabel("Standard deviation")
     axs[5].set_ylim((0,0.15))
 
     #Output
