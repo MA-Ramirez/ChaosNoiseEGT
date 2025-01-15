@@ -2,7 +2,7 @@
 
 Code of the paper
 
-***Chaos and noise: disorder in population dynamics* by M.A.Ramirez, ... & A. Traulsen**
+***Chaos and noise in evolutionary game dynamics* by M. A. Ramirez, G. Datseris & A. Traulsen**
 
 See the published paper here:.----
 
