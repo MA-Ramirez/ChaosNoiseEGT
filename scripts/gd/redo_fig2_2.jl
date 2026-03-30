@@ -1,4 +1,5 @@
 include("deterministic_system_definition.jl")
+#include("DetQuantifiersGraph.jl")
 
 using Statistics: std, mean
 
@@ -30,9 +31,10 @@ pushfirst!(systems, pcpds)
         # TODO: Crucial!!! We must scale the integration time with beta!
         # At least for very small beta the integration time of only 25,000 units is not enough!!!
         τ = 2/β # TODO: should we use this?
-        τ = 1.0 # for now I ignore this timescale
+        #τ = 1.0 # for now I ignore this timescale
         # Execute in parallel the estimation of various quantifiers
-        λs[j] = lyapunovspectrum(ds, 20_000; Δt = τ)
+        λs[j] = (2/β)*lyapunovspectrum(ds, 20_000; Δt = 1.0)
+        #λs[j] = lyapunovspectrum(ds, 20_000; Δt = 1.0)
         X, tvec = trajectory(ds, 25000.0*τ; Δt = τ)
         fractal_dim_corr[j] = grassberger_proccacia_dim(X; show_progress = false)
         fractal_dim_takens[j] = takens_best_estimate_dim(X, 0.05)
@@ -48,9 +50,16 @@ end
 # %% save data
 
 data = @strdict βs λs σs sample_entropy permutation_entropy fractal_dim_corr fractal_dim_takens lempel_ziv
+#data = @strdict βs λs
 
 wsave(datadir("gd", "deterministic_system.jld2"), data)
+#wsave(datadir("gd", "deterministic_system_LEnotscaled.jld2"), data)
 
+# PLOT MS
+
+#graph_det_cluster_run(βs, λs, fractal_dim_corr, lempel_ziv, σs)
+
+"""
 # %% plot
 include("theme.jl")
 
@@ -72,4 +81,5 @@ for ax in axs; ax.xscale = log10; end
 
 display(fig)
 
-wsave(plotsdir("gd", "deterministic_quantifiers"), fig)
+wsave(plotsdir("gd", "deterministic_quantifiers_scaled_OK"), fig)
+"""
